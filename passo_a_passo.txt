@@ -1,0 +1,13 @@
+# Route products
+
+## 1 Passo
+Definir as categorias
+
+## 2 Passo
+Definir o Produto
+
+## Ainda no segundo passo 
+Definir os Tamanhos e quantidades por Tamanhos
+
+## Opcional Definir id do Conjunto
+
