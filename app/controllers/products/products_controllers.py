@@ -45,6 +45,7 @@ def create_product():
     except Exception as e:
         raise e
 
+
 def get_product():
     product_list = ProductModel.query.all()
     sizes_product = Query([SizeModel],current_app.db.session).all()
@@ -58,9 +59,28 @@ def get_product():
 
     return jsonify(new_lista_produtos),HTTPStatus.OK
 
+def get_one_product(id_product:int):
+    try:
+        product = ProductModel.query.get(id_product)
+        if not (product):
+                raise NoResultFound
+
+        sizes_product = Query([SizeModel],current_app.db.session).filter_by(id_product=id_product).all() 
+
+        product: ProductModel
+        new_product = product.asdict()
+        arr = [ size for size in sizes_product if(product.id_product == size.id_product) ]
+        new_produto = (ProductCompletedModel.serializer_product(new_product,arr))
+        
+        return jsonify(new_produto),HTTPStatus.OK
+    except NoResultFound:
+        return {"error": "Not found"}, HTTPStatus.NOT_FOUND
+    except AttributeError:
+        return {"error": "Not found"}, HTTPStatus.NOT_FOUND
+    except Exception as e:
+        raise e
 
 @verify_optional_keys(['cost', 'id_category', 'name', 'sizes_product'])
-
 def update_product(id_product: int):
     
     try:
