@@ -66,6 +66,7 @@ def verify_optional_keys(expected_keys: list):
                 key_error = []
                 count = 0
                 for element in request_json_keys:
+                    print("ELEMENT=>",element)
                     if not element in expected_keys:
                         key_error.append(request_json_keys[count])
                     count += 1

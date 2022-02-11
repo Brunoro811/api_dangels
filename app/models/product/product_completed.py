@@ -16,8 +16,6 @@ class ProductCompletedModel:
             if(product['id_product'] == size.id_product):
                 sizes[size.name] = {"name":size.name,"quantity": size.quantity}
         product['sizes_product'] = sizes    
-            #product['sizes'] = [ {"name":size.name,"quantity": size.quantity} for size in sizes_product if(product['id_product'] == size.id_product) ]
-            #product['sizes'] = [ {"name":size.name,"quantity": size.quantity} for size in sizes_product if(product['id_product'] == size.id_product) ]
         
         return product
 

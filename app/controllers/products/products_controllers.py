@@ -3,7 +3,8 @@ from http import HTTPStatus
 
 
 from sqlalchemy.orm import Query
-from sqlalchemy.orm.exc import UnmappedInstanceError
+from sqlalchemy.orm.exc import UnmappedInstanceError, NoResultFound
+
 
 from app.models.category_products.category_model import CategoryModel
 from app.models.product.product_completed import ProductCompletedModel
@@ -58,15 +59,18 @@ def get_product():
     return jsonify(new_lista_produtos),HTTPStatus.OK
 
 
-#@verify_optional_keys(['cost', 'id_category', 'name', 'sizes_products'])
-#@verify_types({"cost": float, "id_category": int, 'name': str, 'sizes_products': list })
+@verify_optional_keys(['cost', 'id_category', 'name', 'sizes_product'])
+
 def update_product(id_product: int):
+    
     try:
         keys_product = ['name','id_category','cost']
         keys_sizes_products = ['sizes_product']
         data = request.get_json()
 
         product = ProductModel.query.get(id_product)
+        if not (product):
+            raise NoResultFound
         sizes_product = SizeModel.query.filter_by(id_product=id_product).all()
 
         obj_product_size = ProductCompletedModel.separates_model(keys_product,keys_sizes_products,data)
@@ -90,6 +94,8 @@ def update_product(id_product: int):
             current_app.db.session.commit()
 
         return "",HTTPStatus.NO_CONTENT
+    except NoResultFound:
+        return {"error": "Not found"}, HTTPStatus.NOT_FOUND
     except AttributeError:
         return {"error": "Not found"}, HTTPStatus.NOT_FOUND
     except Exception as e:
