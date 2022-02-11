@@ -55,3 +55,31 @@ def verify_types(correct_types: dict):
                 raise e
         return wrapper
     return received_function
+
+def verify_optional_keys(expected_keys: list):
+    def received_func_path(func):
+        @wraps(func)
+        def wrapper(id_product):
+            request_json: dict = request.get_json()
+            request_json_keys = sorted(list(request_json.keys()))
+            try:
+                key_error = []
+                count = 0
+                for element in request_json_keys:
+                    if not element in expected_keys:
+                        key_error.append(request_json_keys[count])
+                    count += 1
+                if key_error:
+                    raise KeyError
+                return func(id_product)
+            except KeyError as e:
+                return {
+                    "available_keys": expected_keys,
+                    "wrong_keys_sended": key_error,
+                }, 422
+            except Exception as e:
+                raise e
+
+        return wrapper
+
+    return received_func_path
