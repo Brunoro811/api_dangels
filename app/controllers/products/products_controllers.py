@@ -11,26 +11,22 @@ from app.models.product.product_completed import ProductCompletedModel
 from app.models.product.products_model import ProductModel
 from app.models.product.size_model import SizeModel
 
-from app.controllers.products.decorators_products import (
-    verify_keys,
-    verify_types,
-    verify_optional_keys,
-)
+from app.controllers.decorators import verify_keys, verify_optional_keys, verify_types
 
 
-@verify_keys(["cost", "id_category", "name", "sizes_products"])
-@verify_types({"cost": float, "id_category": int, "name": str, "sizes_products": list})
+@verify_keys(["cost", "id_category", "name", "sizes_product"])
+@verify_types({"cost": float, "id_category": int, "name": str, "sizes_product": dict})
 def create_product():
     try:
         keys_product = ["name", "id_category", "cost"]
-        keys_sizes_products = ["sizes_products"]
+        keys_sizes_product = ["sizes_product"]
         data: dict = request.get_json()
 
         obj_product_size = ProductCompletedModel.separates_model(
-            keys_product, keys_sizes_products, data
+            keys_product, keys_sizes_product, data
         )
         product = dict(obj_product_size["product"])
-        sizes_products = list(obj_product_size["sizes_product"])
+        sizes_product = list(obj_product_size["sizes_product"])
 
         category = CategoryModel.query.get(int(product["id_category"]))
         product.update({"id_category": category.id_category})
@@ -41,7 +37,7 @@ def create_product():
 
         list_new_sizes = [
             SizeModel(**{**size, "id_product": new_product.id_product})
-            for size in sizes_products
+            for size in sizes_product
         ]
 
         current_app.db.session.add_all(list_new_sizes)
@@ -74,16 +70,14 @@ def get_product():
     return jsonify(new_lista_produtos), HTTPStatus.OK
 
 
-def get_one_product(id_product: int):
+def get_one_product(id: int):
     try:
-        product = ProductModel.query.get(id_product)
+        product = ProductModel.query.get(id)
         if not (product):
             raise NoResultFound
 
         sizes_product = (
-            Query([SizeModel], current_app.db.session)
-            .filter_by(id_product=id_product)
-            .all()
+            Query([SizeModel], current_app.db.session).filter_by(id_product=id).all()
         )
 
         product: ProductModel
@@ -103,20 +97,20 @@ def get_one_product(id_product: int):
 
 
 @verify_optional_keys(["cost", "id_category", "name", "sizes_product"])
-def update_product(id_product: int):
+def update_product(id: int):
 
     try:
         keys_product = ["name", "id_category", "cost"]
-        keys_sizes_products = ["sizes_product"]
+        keys_sizes_product = ["sizes_product"]
         data = request.get_json()
 
-        product = ProductModel.query.get(id_product)
+        product = ProductModel.query.get(id)
         if not (product):
             raise NoResultFound
-        sizes_product = SizeModel.query.filter_by(id_product=id_product).all()
+        sizes_product = SizeModel.query.filter_by(id_product=id).all()
 
         obj_product_size = ProductCompletedModel.separates_model(
-            keys_product, keys_sizes_products, data
+            keys_product, keys_sizes_product, data
         )
 
         if obj_product_size["product"]:
@@ -127,8 +121,8 @@ def update_product(id_product: int):
             current_app.db.session.commit()
 
         if obj_product_size["sizes_product"]:
-            update_sizes_products = dict(obj_product_size["sizes_product"])
-            for key, value in update_sizes_products.items():
+            update_sizes_product = dict(obj_product_size["sizes_product"])
+            for key, value in update_sizes_product.items():
                 for element_sizeModel in sizes_product:
                     if element_sizeModel.name == key:
                         setattr(element_sizeModel, "quantity", value["quantity"])
@@ -145,10 +139,10 @@ def update_product(id_product: int):
         raise e
 
 
-def delete_product(id_product: int):
+def delete_product(id: int):
     try:
-        product = ProductModel.query.get(id_product)
-        sizes_product = SizeModel.query.filter_by(id_product=id_product)
+        product = ProductModel.query.get(id)
+        sizes_product = SizeModel.query.filter_by(id_product=id)
 
         sizes_product.delete()
         current_app.db.session.commit()

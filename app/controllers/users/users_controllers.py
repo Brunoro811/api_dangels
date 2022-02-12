@@ -10,7 +10,31 @@ from app.models.users.type_user_model import TypeUserModel
 from app.models.users.seller_model import SellerModel
 from app.models.users.users_model import UsersModel
 
+from app.controllers.decorators import verify_keys, verify_optional_keys, verify_types
 
+
+@verify_keys(
+    [
+        "first_name",
+        "id_store",
+        "last_name",
+        "name_type_user",
+        "password",
+        "permission",
+        "user_name",
+    ]
+)
+@verify_types(
+    {
+        "first_name": str,
+        "id_store": int,
+        "last_name": str,
+        "name_type_user": str,
+        "password": str,
+        "permission": int,
+        "user_name": str,
+    }
+)
 def create_users():
     session: Session = current_app.db.session
     data = request.get_json()
@@ -44,14 +68,25 @@ def create_users():
     return "", HTTPStatus.NO_CONTENT
 
 
-def update_users(id_user: int):
+@verify_optional_keys(
+    [
+        "first_name",
+        "id_store",
+        "last_name",
+        "name_type_user",
+        "password",
+        "permission",
+        "user_name",
+    ]
+)
+def update_users(id: int):
     session: Session = current_app.db.session
     try:
-        user = UsersModel.query.get(id_user)
+        user = UsersModel.query.get(id)
         if not user:
             raise NoResultFound
-        type_user = TypeUserModel.query.get(id_user)
-        seller = SellerModel.query.get(id_user)
+        type_user = TypeUserModel.query.get(id)
+        seller = SellerModel.query.get(id)
 
         data = request.get_json()
 
@@ -87,14 +122,14 @@ def update_users(id_user: int):
         raise e
 
 
-def delete_users(id_user: int):
+def delete_users(id: int):
     try:
         session: Session = current_app.db.session
-        user = UsersModel.query.get(id_user)
+        user = UsersModel.query.get(id)
         if not (user):
             raise NoResultFound
-        type_user = TypeUserModel.query.get(id_user)
-        seller = SellerModel.query.get(id_user)
+        type_user = TypeUserModel.query.get(id)
+        seller = SellerModel.query.get(id)
         session.delete(seller)
         session.delete(type_user)
         session.delete(user)
@@ -130,14 +165,14 @@ def get_users():
     return jsonify(list_users), HTTPStatus.OK
 
 
-def get_one_users(id_user: int):
+def get_one_users(id: int):
     try:
-        user = UsersModel.query.get(id_user)
+        user = UsersModel.query.get(id)
         if not (user):
             raise NoResultFound
 
-        type_user = TypeUserModel.query.get(id_user)
-        seller = SellerModel.query.get(id_user)
+        type_user = TypeUserModel.query.get(id)
+        seller = SellerModel.query.get(id)
         user_completed = UsersCompletedModel(
             **{
                 **user.__asdict__(),
