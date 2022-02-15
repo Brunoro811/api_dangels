@@ -6,49 +6,36 @@ from sqlalchemy.sql import sqltypes as sql
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy.orm import relationship
 
-from app.models.category_products.category_model import CategoryModel
-from app.models.product.images_model import ImagesModel
-
-
 
 @dataclass
 class ProductModel(db.Model):
     id_product: int
+    code_product: int
     name: str
+    cost_value: float
+    sale_value: float
     id_category: int
-    cost: float
+
     date_creation: datetime
-    id_images: int
 
     __tablename__ = "products"
     id_product = Column(sql.Integer, autoincrement=True, primary_key=True)
+    code_product = Column(sql.Integer, unique=True)
     name = Column(sql.String(50), nullable=False)
-    cost = Column(sql.Float, nullable=False)
+    cost_value = Column(sql.Float(2), nullable=False)
+    sale_value = Column(sql.Float(2), nullable=False)
     date_creation = Column(sql.DateTime, default=datetime.utcnow())
     id_category = Column(
         sql.Integer, ForeignKey("categorys.id_category"), nullable=False
     )
-    id_images = Column(sql.Integer, ForeignKey("images_products.id_images"))
-    categorys = relationship(
-        "CategoryModel", foreign_keys=[id_category], back_populates="products"
-    )
-    images_products = relationship(
-        "ImagesModel", foreign_keys=[id_images], back_populates="products"
-    )
-    
-    def asdict (self):
-        return {
-                "id_product": self.id_product, 
-                "name": self.name, 
-                "cost": self.cost,
-                "date_creation": self.date_creation, 
-                "id_category": self.id_category,
-                "id_images": self.id_images    
-            }
+    variations = relationship("VariationModel", backref="product", uselist=True)
 
-CategoryModel.products = relationship(
-    "ProductModel", order_by=ProductModel.id_category, back_populates="categorys"
-)
-ImagesModel.products = relationship(
-    "ProductModel", order_by=ProductModel.id_images, back_populates="images_products"
-)
+    def asdict(self):
+        return {
+            "id_product": self.id_product,
+            "name": self.name,
+            "cost_value": self.cost_value,
+            "cost_value": self.cost_value,
+            "date_creation": self.date_creation,
+            "id_category": self.id_category,
+        }
