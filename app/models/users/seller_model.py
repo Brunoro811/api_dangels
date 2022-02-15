@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from app.configs.database import db
 
@@ -27,15 +27,10 @@ class SellerModel(db.Model):
     stores = relationship(
         "StoreModel", foreign_keys=[id_store], back_populates="sellers"
     )
+    orders = relationship("OrdersModel", backref="sellers", uselist=True)
 
     def __asdict__(self):
-        return {
-            "id_seller": self.id_seller,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "id_store": self.id_store,
-            "date_creation": self.date_creation,
-        }
+        return asdict(self)
 
 
 StoreModel.sellers = relationship(

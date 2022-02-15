@@ -20,11 +20,12 @@ class UsersModel(db.Model):
 
     __tablename__ = "users"
     id_user = Column(sql.Integer, autoincrement=True, primary_key=True)
-    user_name = Column(sql.String(20), nullable=False)
+    user_name = Column(sql.String(20), unique=True, nullable=False)
     password = Column(sql.String(30), nullable=False)
     id_desabled = Column(sql.Integer)
     id_type_user = Column(sql.Integer, ForeignKey("types_users.id_type_user"))
     id_seller = Column(sql.Integer, ForeignKey("sellers.id_seller"))
+    email = Column(sql.String(100), unique=True, nullable=False)
 
     types_users = relationship(
         "TypeUserModel", foreign_keys=[id_type_user], back_populates="users"

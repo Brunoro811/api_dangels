@@ -18,3 +18,7 @@ def init_app(app: Flask):
     from app.models.stores.store_model import StoreModel
     from app.models.users.type_user_model import TypeUserModel
     from app.models.users.users_model import TypeUserModel
+
+    from app.models.users.orders_seller import OrdersModel
+    from app.models.client.client_model import ClientModel
+    from app.models.users.orders_has_products import OrdersHasProductsModel

@@ -3,7 +3,7 @@ from app.configs.database import db
 
 from sqlalchemy import Column
 from sqlalchemy.sql import sqltypes as sql
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates, relationship
 
 
 @dataclass
@@ -23,6 +23,8 @@ class StoreModel(db.Model):
     number = Column(sql.Integer, nullable=False)
     zip_code = Column(sql.String(9), nullable=False)
     other_information = Column(sql.String(200), nullable=False)
+
+    orders = relationship("OrdersModel", backref="orders", uselist=True)
 
     @validates("name_store")
     def title(self, key: str, value: str):
