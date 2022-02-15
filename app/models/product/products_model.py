@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from app.configs.database import db
 
@@ -29,13 +29,9 @@ class ProductModel(db.Model):
         sql.Integer, ForeignKey("categorys.id_category"), nullable=False
     )
     variations = relationship("VariationModel", backref="product", uselist=True)
+    orders_has_products_product = relationship(
+        "OrdersHasProductsModel", backref="product", uselist=True
+    )
 
     def asdict(self):
-        return {
-            "id_product": self.id_product,
-            "name": self.name,
-            "cost_value": self.cost_value,
-            "cost_value": self.cost_value,
-            "date_creation": self.date_creation,
-            "id_category": self.id_category,
-        }
+        return asdict(self)
