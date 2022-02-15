@@ -2,92 +2,92 @@ from flask import current_app, jsonify, request
 from http import HTTPStatus
 
 
-from sqlalchemy.orm import Query
+from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import UnmappedInstanceError, NoResultFound
+from sqlalchemy.exc import IntegrityError
+from app.controllers.products.products_helpers import help_normalize_variations
 
 
-from app.models.category_products.category_model import CategoryModel
 from app.models.product.product_completed import ProductCompletedModel
 from app.models.product.products_model import ProductModel
-from app.models.product.size_model import SizeModel
+from app.models.product.variation_model import VariationModel
 
 from app.controllers.decorators import verify_keys, verify_optional_keys, verify_types
 
 
-@verify_keys(["cost", "id_category", "name", "sizes_product"])
-@verify_types({"cost": float, "id_category": int, "name": str, "sizes_product": dict})
+@verify_keys(["cost_value", "id_category", "name", "sale_value", "variations"])
+@verify_types(
+    {
+        "cost_value": float,
+        "sale_value": float,
+        "id_category": int,
+        "name": str,
+        "variations": list,
+    }
+)
 def create_product():
+    session: Session = current_app.db.session
     try:
-        keys_product = ["name", "id_category", "cost"]
+        keys_product = ["name", "id_category", "cost_value", "sale_value"]
+        keys_colors = ["variations", "color_name"]
         keys_sizes_product = ["sizes_product"]
         data: dict = request.get_json()
 
-        obj_product_size = ProductCompletedModel.separates_model(
-            keys_product, keys_sizes_product, data
+        obj_product_completed = ProductCompletedModel.separates_model(
+            keys_product, keys_colors, keys_sizes_product, data
         )
-        product = dict(obj_product_size["product"])
-        sizes_product = list(obj_product_size["sizes_product"])
 
-        category = CategoryModel.query.get(int(product["id_category"]))
-        product.update({"id_category": category.id_category})
+        product = dict(obj_product_completed["product"])
         new_product = ProductModel(**product)
+        session.add(new_product)
+        session.commit()
 
-        current_app.db.session.add(new_product)
-        current_app.db.session.commit()
+        list_colors_sizes = [*obj_product_completed["colors_sizes_product"]]
 
-        list_new_sizes = [
-            SizeModel(**{**size, "id_product": new_product.id_product})
-            for size in sizes_product
+        obj_variations = [
+            VariationModel(**{**element, "id_product": new_product.id_product})
+            for element in list_colors_sizes
         ]
 
-        current_app.db.session.add_all(list_new_sizes)
-        current_app.db.session.commit()
-        product = new_product.asdict()
-        data = ProductCompletedModel.serializer_product(product, list_new_sizes)
-
+        session.add_all(obj_variations)
+        session.commit()
+        data["id_product"] = new_product.id_product
         return jsonify(data), HTTPStatus.CREATED
     except AttributeError:
-        return {"erro": "Algum campo esta inválido"}, HTTPStatus.NOT_FOUND
+        return {"erro": "atribute error pesquisar"}, HTTPStatus.NOT_FOUND
+    except IntegrityError:
+        return {"erro": "verify if category created!"}, HTTPStatus.BAD_REQUEST
     except Exception as e:
         raise e
 
 
 def get_product():
     product_list = ProductModel.query.all()
-    sizes_product = Query([SizeModel], current_app.db.session).all()
+    list_products = []
 
-    new_lista_produtos = []
     for product in product_list:
         product: ProductModel
-        new_product = product.asdict()
-        arr = [
-            size for size in sizes_product if (product.id_product == size.id_product)
-        ]
-        new_lista_produtos.append(
-            ProductCompletedModel.serializer_product(new_product, arr)
+        obj_product_completed = {}
+        obj_product_completed["product"] = product.asdict()
+        obj_product_completed["variations"] = help_normalize_variations(
+            product.variations
         )
-
-    return jsonify(new_lista_produtos), HTTPStatus.OK
+        list_products.append(obj_product_completed)
+    return jsonify(list_products), HTTPStatus.OK
 
 
 def get_one_product(id: int):
     try:
         product = ProductModel.query.get(id)
-        if not (product):
-            raise NoResultFound
+        product: ProductModel
 
-        sizes_product = (
-            Query([SizeModel], current_app.db.session).filter_by(id_product=id).all()
+        obj_product_completed = {}
+        obj_product_completed["product"] = product.asdict()
+        obj_product_completed["variations"] = help_normalize_variations(
+            product.variations
         )
 
-        product: ProductModel
-        new_product = product.asdict()
-        arr = [
-            size for size in sizes_product if (product.id_product == size.id_product)
-        ]
-        new_produto = ProductCompletedModel.serializer_product(new_product, arr)
-
-        return jsonify(new_produto), HTTPStatus.OK
+        return jsonify(obj_product_completed), HTTPStatus.OK
     except NoResultFound:
         return {"error": "Not found"}, HTTPStatus.NOT_FOUND
     except AttributeError:
@@ -96,41 +96,47 @@ def get_one_product(id: int):
         raise e
 
 
-@verify_optional_keys(["cost", "id_category", "name", "sizes_product"])
+@verify_optional_keys(["cost_value", "id_category", "name", "sale_value", "variations"])
 def update_product(id: int):
-
+    session: Session = current_app.db.session
     try:
-        keys_product = ["name", "id_category", "cost"]
-        keys_sizes_product = ["sizes_product"]
+
         data = request.get_json()
+
+        keys_product = ["name", "id_category", "cost_value", "sale_value"]
+        keys_colors = ["variations", "color_name"]
+        keys_sizes_product = ["sizes_product"]
 
         product = ProductModel.query.get(id)
         if not (product):
             raise NoResultFound
-        sizes_product = SizeModel.query.filter_by(id_product=id).all()
 
-        obj_product_size = ProductCompletedModel.separates_model(
-            keys_product, keys_sizes_product, data
+        obj_product_completed = ProductCompletedModel.separates_model_for_update(
+            keys_product, keys_colors, keys_sizes_product, data
         )
-
-        if obj_product_size["product"]:
-            update_product = dict(obj_product_size["product"])
+        if obj_product_completed["product"]:
+            update_product = dict(obj_product_completed["product"])
             for key, value in update_product.items():
                 setattr(product, key, value)
-            current_app.db.session.add(product)
-            current_app.db.session.commit()
 
-        if obj_product_size["sizes_product"]:
-            update_sizes_product = dict(obj_product_size["sizes_product"])
-            for key, value in update_sizes_product.items():
-                for element_sizeModel in sizes_product:
-                    if element_sizeModel.name == key:
-                        setattr(element_sizeModel, "quantity", value["quantity"])
-                        current_app.db.session.add(element_sizeModel)
+            session.add(product)
+            session.commit()
 
-            current_app.db.session.commit()
+        if obj_product_completed["variations"]:
+            for color_size_update in obj_product_completed["variations"]:
+                for product_variations_base_data in product.variations:
+                    if (
+                        product_variations_base_data.color == color_size_update["color"]
+                        and product_variations_base_data.size
+                        == color_size_update["size"]
+                    ):
+                        for key, value in color_size_update.items():
+                            setattr(product_variations_base_data, key, value)
+            session.add_all(product.variations)
+            session.commit()
 
         return "", HTTPStatus.NO_CONTENT
+
     except NoResultFound:
         return {"error": "Not found"}, HTTPStatus.NOT_FOUND
     except AttributeError:
@@ -141,15 +147,16 @@ def update_product(id: int):
 
 def delete_product(id: int):
     try:
+        session: Session = current_app.db.session
         product = ProductModel.query.get(id)
-        sizes_product = SizeModel.query.filter_by(id_product=id)
+        variations = VariationModel.query.filter_by(id_product=id)
 
-        sizes_product.delete()
-        current_app.db.session.commit()
-        current_app.db.session.delete(product)
-        current_app.db.session.commit()
+        variations.delete()
+        session.delete(product)
+        session.commit()
 
         return "", HTTPStatus.NO_CONTENT
+
     except UnmappedInstanceError:
         return {"erro": "Not found product."}, HTTPStatus.NOT_FOUND
     except Exception as e:
