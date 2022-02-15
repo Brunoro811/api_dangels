@@ -6,7 +6,7 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy.sql import sqltypes as sql
 from sqlalchemy.orm import relationship
 
-from app.models.users.store_model import StoreModel
+from app.models.stores.store_model import StoreModel
 
 
 @dataclass

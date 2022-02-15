@@ -15,6 +15,6 @@ def init_app(app: Flask):
 
     from app.models.users.disabled_users import DisabledUsers
     from app.models.users.seller_model import SellerModel
-    from app.models.users.store_model import StoreModel
+    from app.models.stores.store_model import StoreModel
     from app.models.users.type_user_model import TypeUserModel
     from app.models.users.users_model import TypeUserModel
