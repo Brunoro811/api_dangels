@@ -23,7 +23,7 @@ class OrdersModel(db.Model):
     date_creation = Column(sql.DateTime, default=datetime.utcnow())
 
     id_seller = Column(sql.Integer, ForeignKey("sellers.id_seller"), nullable=False)
-    id_client = Column(sql.Integer, ForeignKey("clients.id_client"), nullable=False)
+    id_client = Column(sql.Integer, ForeignKey("clients.id_client"))
     id_store = Column(sql.Integer, ForeignKey("stores.id_store"), nullable=False)
     orders_has_products_seller = relationship(
         "OrdersHasProductsModel", backref="orders", uselist=True

@@ -15,20 +15,37 @@ from app.models.product.variation_model import VariationModel
 from app.controllers.decorators import verify_keys, verify_optional_keys, verify_types
 
 
-@verify_keys(["cost_value", "id_category", "name", "sale_value", "variations"])
-@verify_types(
-    {
-        "cost_value": float,
-        "sale_value": float,
-        "id_category": int,
-        "name": str,
-        "variations": list,
-    }
+@verify_keys(
+    [
+        "name",
+        "cost_value",
+        "sale_value_varejo",
+        "sale_value_atacado",
+        "sale_value_promotion",
+        "id_category",
+        "variations",
+    ]
 )
+# @verify_types(
+#    {
+#        "cost_value": float,
+#        "sale_value": float,
+#        "id_category": int,
+##        "name": str,
+#        "variations": list,
+#    }
+# )
 def create_product():
     session: Session = current_app.db.session
     try:
-        keys_product = ["name", "id_category", "cost_value", "sale_value"]
+        keys_product = [
+            "name",
+            "cost_value",
+            "sale_value_varejo",
+            "sale_value_atacado",
+            "sale_value_promotion",
+            "id_category",
+        ]
         keys_colors = ["variations", "color_name"]
         keys_sizes_product = ["sizes_product"]
         data: dict = request.get_json()
@@ -39,6 +56,7 @@ def create_product():
 
         product = dict(obj_product_completed["product"])
         new_product = ProductModel(**product)
+
         session.add(new_product)
         session.commit()
 
