@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from app.configs.database import db
 
 from sqlalchemy import Column, ForeignKey
@@ -34,6 +34,9 @@ class UsersModel(db.Model):
     sellers = relationship(
         "SellerModel", foreign_keys=[id_seller], back_populates="users"
     )
+
+    def asdict(self):
+        return asdict(self)
 
     def __asdict__(self):
         return {

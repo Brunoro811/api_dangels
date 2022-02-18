@@ -29,7 +29,7 @@ class SellerModel(db.Model):
     )
     orders = relationship("OrdersModel", backref="sellers", uselist=True)
 
-    def __asdict__(self):
+    def asdict(self):
         return asdict(self)
 
 

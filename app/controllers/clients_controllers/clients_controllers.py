@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import IntegrityError
 
-from app.controllers.decorators import verify_keys, verify_optional_keys
+from app.controllers.decorators import verify_keys
 from app.models.client.client_model import ClientModel
 
 
@@ -75,7 +75,7 @@ def delete_client(id: int):
         raise e
 
 
-@verify_optional_keys(
+@verify_keys(
     [
         "birthdate",
         "city",
@@ -88,7 +88,8 @@ def delete_client(id: int):
         "phone",
         "street",
         "zip_code",
-    ]
+    ],
+    optional_keys=True,
 )
 def update_client(id: int):
     session: Session = current_app.db.session

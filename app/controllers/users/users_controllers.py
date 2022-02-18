@@ -11,19 +11,19 @@ from app.models.users.type_user_model import TypeUserModel
 from app.models.users.seller_model import SellerModel
 from app.models.users.users_model import UsersModel
 
-from app.controllers.decorators import verify_keys, verify_optional_keys, verify_types
+from app.controllers.decorators import verify_keys, verify_types
 
 
-"""@verify_keys(
+@verify_keys(
     [
-        "email",
-        "first_name",
-        "id_store",
-        "last_name",
-        "name_type_user",
-        "password",
-        "permission",
         "user_name",
+        "password",
+        "name_type_user",
+        "permission",
+        "first_name",
+        "last_name",
+        "id_store",
+        "email",
     ]
 )
 @verify_types(
@@ -37,9 +37,7 @@ from app.controllers.decorators import verify_keys, verify_optional_keys, verify
         "permission": int,
         "user_name": str,
     }
-)"""
-
-
+)
 def create_users():
     try:
 
@@ -60,7 +58,6 @@ def create_users():
         new_seller = SellerModel(**data["seller"])
         session.add(new_seller)
         session.commit()
-
         new_user = UsersModel(
             **{
                 **data["user"],
@@ -68,20 +65,17 @@ def create_users():
                 "id_seller": new_seller.id_seller,
             }
         )
-        print("TYpeUser=>", new_type_user)
-        print("new_seller=>", new_seller)
-        print("new_user=>", new_user)
         session.add(new_user)
         session.commit()
 
         return "", HTTPStatus.NO_CONTENT
     except IntegrityError:
-        return {"error": "Store not found or not created!"}, HTTPStatus.BAD_REQUEST
+        return {"error": "user already exist!"}, HTTPStatus.BAD_REQUEST
     except Exception as e:
         raise e
 
 
-@verify_optional_keys(
+@verify_keys(
     [
         "first_name",
         "id_store",
@@ -90,7 +84,8 @@ def create_users():
         "password",
         "permission",
         "user_name",
-    ]
+    ],
+    optional_keys=True,
 )
 def update_users(id: int):
     session: Session = current_app.db.session
@@ -158,44 +153,32 @@ def delete_users(id: int):
 
 def get_users():
     users = UsersModel.query.all()
-    type_users = TypeUserModel.query.all()
-    sellers = SellerModel.query.all()
 
     list_users = []
-    count = 0
     for user in users:
         list_users.append(
             UsersCompletedModel(
                 **{
-                    **user.__asdict__(),
-                    **type_users[count].__asdict__(),
-                    **sellers[count].__asdict__(),
+                    **user.sellers.asdict(),
+                    **user.types_users.asdict(),
+                    **user.asdict(),
                 }
             )
         )
-        count += 1
 
     return jsonify(list_users), HTTPStatus.OK
 
 
 def get_one_users(id: int):
     try:
-        user = UsersModel.query.get(id)
+        user: UsersModel = UsersModel.query.get(id)
         if not (user):
             raise NoResultFound
-
-        type_user = TypeUserModel.query.get(id)
-        seller = SellerModel.query.get(id)
         user_completed = UsersCompletedModel(
-            **{
-                **user.__asdict__(),
-                **type_user.__asdict__(),
-                **seller.__asdict__(),
-            }
+            **{**user.sellers.asdict(), **user.types_users.asdict(), **user.asdict()}
         )
+        return jsonify(user_completed), HTTPStatus.OK
     except NoResultFound:
         return {"error": "Not Found"}, HTTPStatus.NOT_FOUND
     except Exception as e:
         raise e
-
-    return jsonify(user_completed), HTTPStatus.OK

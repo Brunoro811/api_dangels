@@ -52,7 +52,7 @@ def create_sale():
         new_order = OrdersModel(
             **{
                 "id_seller": data["id_seller"],
-                "id_client": None,
+                "id_client": data["id_client"],
                 "id_store": data["id_store"],
             }
         )
@@ -98,7 +98,6 @@ def create_sale():
                     }
                 )
             )
-        print("ORDERS => ", orders_products)
         session.add_all(product_get.variations)
         session.add_all(orders_products)
         session.commit()

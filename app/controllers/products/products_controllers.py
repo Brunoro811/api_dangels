@@ -12,29 +12,33 @@ from app.models.product.product_completed import ProductCompletedModel
 from app.models.product.products_model import ProductModel
 from app.models.product.variation_model import VariationModel
 
-from app.controllers.decorators import verify_keys, verify_optional_keys, verify_types
+from app.controllers.decorators import verify_keys, verify_types
 
 
-"""@verify_keys(
+@verify_keys(
     [
-        "name",
         "cost_value",
-        "sale_value_varejo",
-        "sale_value_atacado",
-        "sale_value_promotion",
         "id_category",
+        "name",
+        "sale_value_varejo",
         "variations",
+        "quantity_atacado",
+        "sale_value_promotion",
+        "sale_value_atacado",
     ]
-)"""
-# @verify_types(
-#    {
-#        "cost_value": float,
-#        "sale_value": float,
-#        "id_category": int,
-##        "name": str,
-#        "variations": list,
-#    }
-# )
+)
+@verify_types(
+    {
+        "cost_value": float,
+        "id_category": int,
+        "name": str,
+        "variations": list,
+        "quantity_atacado": int,
+        "sale_value_promotion": float,
+        "sale_value_atacado": float,
+        "sale_value_varejo": float,
+    }
+)
 def create_product():
     session: Session = current_app.db.session
     try:
@@ -72,13 +76,10 @@ def create_product():
         session.commit()
         data["id_product"] = new_product.id_product
         return jsonify(data), HTTPStatus.CREATED
-    # except AttributeError:
-    #    return {"erro": "atribute error pesquisar"}, HTTPStatus.NOT_FOUND
-    # except IntegrityError as e:
-    #    print("")
-    #    print("-> ", e)
-    #    print("")
-    #    return {"erro": f"{e.args[0]} "}, HTTPStatus.BAD_REQUEST
+    except AttributeError:
+        return {"erro": "atribute error pesquisar"}, HTTPStatus.NOT_FOUND
+    except IntegrityError as e:
+        return {"erro": f"{e.args[0]} "}, HTTPStatus.BAD_REQUEST
     except Exception as e:
         raise e
 
@@ -118,7 +119,32 @@ def get_one_product(id: int):
         raise e
 
 
-@verify_optional_keys(["cost_value", "id_category", "name", "sale_value", "variations"])
+@verify_keys(
+    [
+        "cost_value",
+        "id_category",
+        "name",
+        "sale_value_varejo",
+        "variations",
+        "quantity_atacado",
+        "sale_value_promotion",
+        "sale_value_atacado",
+    ],
+    optional_keys=True,
+)
+@verify_types(
+    {
+        "cost_value": float,
+        "id_category": int,
+        "name": str,
+        "variations": list,
+        "quantity_atacado": int,
+        "sale_value_promotion": float,
+        "sale_value_atacado": float,
+        "sale_value_varejo": float,
+    },
+    optional_keys=True,
+)
 def update_product(id: int):
     session: Session = current_app.db.session
     try:
