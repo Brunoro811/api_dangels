@@ -96,3 +96,43 @@ def verify_types(correct_types: dict):
         return wrapper
 
     return received_function
+
+
+def verify_keys_list_interna_one(name_list: str, correct_keys: list[str]):
+    def received_function(function):
+        @wraps(function)
+        def wrapper():
+            request_json: dict = request.get_json()
+            request_json = request_json[name_list]
+            correct_keys.sort()
+            try:
+                for element in request_json:
+                    lista_keys_received = list(element.keys())
+                    count = 0
+                    key_error = []
+                    if len(correct_keys) > len(lista_keys_received):
+                        return {
+                            "error": "some keys is missing!"
+                        }, httpstatus.UNPROCESSABLE_ENTITY
+                    if len(correct_keys) < len(lista_keys_received):
+                        return {
+                            "error": "some keys is left over!"
+                        }, httpstatus.UNPROCESSABLE_ENTITY
+                    for key in element:
+                        if not key in correct_keys:
+                            key_error.append(key)
+                        count += 1
+                    if key_error:
+                        raise KeyError
+
+                return function()
+            except KeyError:
+                return {
+                    "error": "key(s) incorrect",
+                    "expected": correct_keys,
+                    "received": key_error,
+                }, httpstatus.UNPROCESSABLE_ENTITY
+
+        return wrapper
+
+    return received_function

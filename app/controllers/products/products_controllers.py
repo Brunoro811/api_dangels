@@ -15,7 +15,7 @@ from app.models.product.variation_model import VariationModel
 from app.controllers.decorators import verify_keys, verify_optional_keys, verify_types
 
 
-@verify_keys(
+"""@verify_keys(
     [
         "name",
         "cost_value",
@@ -25,7 +25,7 @@ from app.controllers.decorators import verify_keys, verify_optional_keys, verify
         "id_category",
         "variations",
     ]
-)
+)"""
 # @verify_types(
 #    {
 #        "cost_value": float,
@@ -45,6 +45,7 @@ def create_product():
             "sale_value_atacado",
             "sale_value_promotion",
             "id_category",
+            "quantity_atacado",
         ]
         keys_colors = ["variations", "color_name"]
         keys_sizes_product = ["sizes_product"]
@@ -71,10 +72,13 @@ def create_product():
         session.commit()
         data["id_product"] = new_product.id_product
         return jsonify(data), HTTPStatus.CREATED
-    except AttributeError:
-        return {"erro": "atribute error pesquisar"}, HTTPStatus.NOT_FOUND
-    except IntegrityError:
-        return {"erro": "verify if category created!"}, HTTPStatus.BAD_REQUEST
+    # except AttributeError:
+    #    return {"erro": "atribute error pesquisar"}, HTTPStatus.NOT_FOUND
+    # except IntegrityError as e:
+    #    print("")
+    #    print("-> ", e)
+    #    print("")
+    #    return {"erro": f"{e.args[0]} "}, HTTPStatus.BAD_REQUEST
     except Exception as e:
         raise e
 
@@ -132,6 +136,7 @@ def update_product(id: int):
         obj_product_completed = ProductCompletedModel.separates_model_for_update(
             keys_product, keys_colors, keys_sizes_product, data
         )
+
         if obj_product_completed["product"]:
             update_product = dict(obj_product_completed["product"])
             for key, value in update_product.items():

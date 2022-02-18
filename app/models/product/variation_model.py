@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from app.configs.database import db
 
 from sqlalchemy.sql import sqltypes as sql
@@ -21,3 +21,6 @@ class VariationModel(db.Model):
     image = Column(sql.String(150))
     quantity = Column(sql.Integer, nullable=False)
     id_product = Column(sql.Integer, ForeignKey("products.id_product"), nullable=False)
+
+    def asdict(self):
+        return asdict(self)
