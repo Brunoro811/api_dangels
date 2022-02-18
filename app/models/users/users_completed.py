@@ -17,6 +17,7 @@ class UsersCompletedModel:
     last_name: str
     id_store: int
     date_creation: DateTime
+    email: str
 
     @classmethod
     def separates_model(

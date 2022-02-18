@@ -98,7 +98,6 @@ def create_sale():
                     }
                 )
             )
-        print("ORDERS => ", orders_products)
         session.add_all(product_get.variations)
         session.add_all(orders_products)
         session.commit()

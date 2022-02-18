@@ -5,10 +5,19 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from app.models.stores.store_model import StoreModel
-from app.controllers.decorators import verify_keys, verify_optional_keys
+from app.controllers.decorators import verify_keys, verify_types
 
 
 @verify_keys(["name_store", "number", "other_information", "street", "zip_code"])
+@verify_types(
+    {
+        "name_store": str,
+        "street": str,
+        "number": int,
+        "zip_code": str,
+        "other_information": str,
+    }
+)
 def create_stores():
     session: Session = current_app.db.session
 
@@ -61,8 +70,19 @@ def delete_store(id: int):
         raise e
 
 
-@verify_optional_keys(
-    ["name_store", "number", "other_information", "street", "zip_code"]
+@verify_keys(
+    ["name_store", "number", "other_information", "street", "zip_code"],
+    optional_keys=True,
+)
+@verify_types(
+    {
+        "name_store": str,
+        "street": str,
+        "number": int,
+        "zip_code": str,
+        "other_information": str,
+    },
+    optional_keys=True,
 )
 def update_store(id: int):
     session: Session = current_app.db.session
@@ -81,7 +101,7 @@ def update_store(id: int):
             setattr(storie, key, value)
             session.add(storie)
             session.commit()
-        return jsonify(storie), HTTPStatus.OK
+        return "", HTTPStatus.NO_CONTENT
     except NoResultFound:
         return {"error": "Not found store."}, HTTPStatus.BAD_REQUEST
     except Exception as e:

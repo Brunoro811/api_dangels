@@ -5,17 +5,21 @@ from app.controllers.category_products.category_decorators import verify_categor
 from app.models.category_products.category_model import CategoryModel
 
 from sqlalchemy.orm.exc import UnmappedInstanceError, NoResultFound
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 
 @verify_category
 def create_category():
     try:
+        session: Session = current_app.db.session
         data = request.get_json()
         new_category = CategoryModel(**data)
-        current_app.db.session.add(new_category)
-        current_app.db.session.commit()
+        session.add(new_category)
+        session.commit()
         return jsonify(new_category), httpstatus.CREATED
-
+    except IntegrityError:
+        return {"error": "category already exist!"}, httpstatus.CONFLICT
     except Exception as e:
         raise e
 
@@ -23,7 +27,8 @@ def create_category():
 def get_all_category():
     try:
         categorys = CategoryModel.query.all()
-        return jsonify(CategoryModel.serializer(categorys)), httpstatus.OK
+        print("all categorys", categorys)
+        return jsonify(categorys), httpstatus.OK
     except Exception as e:
         raise e
 
@@ -43,33 +48,35 @@ def get_category(id_category: int):
 
 def update_category(id_category: int):
     try:
+        session: Session = current_app.db.session
         data: dict = request.get_json()
         name = data["name"]
 
         if len(list(data.values())) > 1:
             return {
-                "erro": "deve ter somente o nome da categoria!"
+                "error": "must only count name key!"
             }, httpstatus.UNPROCESSABLE_ENTITY
 
         category = CategoryModel.query.get(id_category)
         setattr(category, "name", name)
 
-        current_app.db.session.add(category)
-        current_app.db.session.commit()
+        session.add(category)
+        session.commit()
         return "", httpstatus.NO_CONTENT
     except AttributeError:
-        return {"erro": "categoria não encontrada"}, httpstatus.NOT_FOUND
+        return {"error": "category not found!"}, httpstatus.NOT_FOUND
     except Exception as e:
         raise e
 
 
 def deleteategory(id_category: int):
     try:
+        session: Session = current_app.db.session
         category = CategoryModel.query.get(id_category)
-        current_app.db.session.delete(category)
-        current_app.db.session.commit()
+        session.delete(category)
+        session.commit()
         return "", httpstatus.NO_CONTENT
     except UnmappedInstanceError:
-        return {"erro": "Categoria não encontrada!"}, httpstatus.NOT_FOUND
+        return {"error": "category not found!"}, httpstatus.NOT_FOUND
     except Exception as e:
         raise e

@@ -1,9 +1,9 @@
-from unicodedata import category
 from app.configs.database import db
 from dataclasses import dataclass
 
 from sqlalchemy.sql import sqltypes as sql
-from sqlalchemy import Column, ForeignKey
+from sqlalchemy import Column
+from sqlalchemy.orm import validates
 
 
 @dataclass
@@ -16,9 +16,6 @@ class CategoryModel(db.Model):
     name = Column(sql.String(50), unique=True, nullable=False)
     products = db.relationship("ProductModel", backref="category")
 
-    @staticmethod
-    def serializer(values: list[tuple]) -> dict:
-        serialzier_values = [
-            {"id": category.id_category, "name": category.name} for category in values
-        ]
-        return serialzier_values
+    @validates("name")
+    def title(self, key, value: str):
+        return value.title()
