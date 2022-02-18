@@ -17,6 +17,7 @@ class UsersModel(db.Model):
     password: str
     id_type_user: int
     id_seller: int
+    email: str
 
     __tablename__ = "users"
     id_user = Column(sql.Integer, autoincrement=True, primary_key=True)

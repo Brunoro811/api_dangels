@@ -5,7 +5,7 @@ from app.routes.category_products.category_products_route import (
     bp as bp_category_products,
 )
 from app.routes.users.users_route import bp as bp_users
-from app.routes.sales.sales_route import bp as bp_sale
+from app.routes.sales.orders_route import bp as bp_sale
 from app.routes.stores.stores_route import bp as bp_stores
 from app.routes.clients.clients_route import bp as bp_clients
 

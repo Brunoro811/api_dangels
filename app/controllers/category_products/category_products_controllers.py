@@ -4,7 +4,7 @@ from http import HTTPStatus as httpstatus
 from app.controllers.category_products.category_decorators import verify_category
 from app.models.category_products.category_model import CategoryModel
 
-from sqlalchemy.orm.exc import UnmappedInstanceError
+from sqlalchemy.orm.exc import UnmappedInstanceError, NoResultFound
 
 
 @verify_category
@@ -28,8 +28,17 @@ def get_all_category():
         raise e
 
 
-def get_category():
-    ...
+def get_category(id_category: int):
+    try:
+        category = CategoryModel.query.get(id_category)
+        if not category:
+            raise NoResultFound
+
+        return jsonify(category), httpstatus.OK
+    except NoResultFound:
+        return {"error": "Not found category."}, httpstatus.NOT_FOUND
+    except Exception as e:
+        raise e
 
 
 def update_category(id_category: int):
