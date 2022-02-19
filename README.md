@@ -1,5 +1,5 @@
 # Api Crud
-## Sistema de Controle de estoque e Faturamento Financeiro
+## Sistema de Controle de estoque 
 > Status: Em Desenvolvimento ⚠️
 
 [![NPM](https://img.shields.io/npm/l/react)](https://github.com/Brunoro811/api_dangels/blob/main/LICENSE)
