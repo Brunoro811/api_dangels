@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from app.models.stores.store_model import StoreModel
-from app.controllers.decorators import verify_keys, verify_types
+from app.controllers.decorators import verify_keys, verify_types, validator
 
 
 @verify_keys(["name_store", "number", "other_information", "street", "zip_code"])
@@ -18,13 +18,12 @@ from app.controllers.decorators import verify_keys, verify_types
         "other_information": str,
     }
 )
+@validator(zip_code="zip_code")
 def create_stores():
     session: Session = current_app.db.session
 
     data = request.get_json()
     new_store = StoreModel(**data)
-    new_new_store = new_store.normalize()
-    new_new_store.pop("id_store")
 
     session.add(new_store)
     session.commit()
@@ -84,6 +83,7 @@ def delete_store(id: int):
     },
     optional_keys=True,
 )
+@validator(zip_code="zip_code")
 def update_store(id: int):
     session: Session = current_app.db.session
     try:

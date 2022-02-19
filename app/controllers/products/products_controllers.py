@@ -10,8 +10,8 @@ from app.models.product.group_model import GroupModel
 
 
 from app.models.product.product_completed import ProductCompletedModel
-from app.models.product.products_model import ProductModel
-from app.models.product.variation_model import VariationModel
+from app.models.product_base.products_model import ProductModelBase
+from app.models.product_base.variation_model import VariationModelBase
 
 from app.controllers.decorators import verify_keys, verify_types
 
@@ -61,21 +61,18 @@ def create_product():
         )
 
         product = dict(obj_product_completed["product"])
-        new_product = ProductModel(**product)
+        new_product = ProductModelBase(**product)
+
+        list_colors_sizes = [*obj_product_completed["colors_sizes_product"]]
+
+        new_product.variations = [
+            VariationModelBase(**{**element, "id_product": new_product.id_product})
+            for element in list_colors_sizes
+        ]
 
         session.add(new_product)
         session.commit()
 
-        list_colors_sizes = [*obj_product_completed["colors_sizes_product"]]
-
-        obj_variations = [
-            VariationModel(**{**element, "id_product": new_product.id_product})
-            for element in list_colors_sizes
-        ]
-
-        session.add_all(obj_variations)
-        session.commit()
-        data["id_product"] = new_product.id_product
         return jsonify(data), HTTPStatus.CREATED
     except AttributeError:
         return {"erro": "atribute error pesquisar"}, HTTPStatus.NOT_FOUND
@@ -86,11 +83,11 @@ def create_product():
 
 
 def get_product():
-    product_list = ProductModel.query.all()
+    product_list = ProductModelBase.query.all()
     list_products = []
 
     for product in product_list:
-        product: ProductModel
+        product: ProductModelBase
         obj_product_completed = {}
         obj_product_completed["product"] = product.asdict()
         obj_product_completed["variations"] = help_normalize_variations(
@@ -102,8 +99,8 @@ def get_product():
 
 def get_one_product(id: int):
     try:
-        product = ProductModel.query.get(id)
-        product: ProductModel
+        product = ProductModelBase.query.get(id)
+        product: ProductModelBase
 
         obj_product_completed = {}
         obj_product_completed["product"] = product.asdict()
@@ -156,7 +153,7 @@ def update_product(id: int):
         keys_colors = ["variations", "color_name"]
         keys_sizes_product = ["sizes_product"]
 
-        product = ProductModel.query.get(id)
+        product = ProductModelBase.query.get(id)
         if not (product):
             raise NoResultFound
 
@@ -169,8 +166,8 @@ def update_product(id: int):
             for key, value in update_product.items():
                 setattr(product, key, value)
 
-            session.add(product)
-            session.commit()
+            # session.add(product)
+            # session.commit()
 
         if obj_product_completed["variations"]:
             for color_size_update in obj_product_completed["variations"]:
@@ -182,8 +179,8 @@ def update_product(id: int):
                     ):
                         for key, value in color_size_update.items():
                             setattr(product_variations_base_data, key, value)
-            session.add_all(product.variations)
-            session.commit()
+            # session.add_all(product.variations)
+            # session.commit()
 
         return "", HTTPStatus.NO_CONTENT
 
@@ -198,8 +195,8 @@ def update_product(id: int):
 def delete_product(id: int):
     try:
         session: Session = current_app.db.session
-        product = ProductModel.query.get(id)
-        variations = VariationModel.query.filter_by(id_product=id)
+        product = ProductModelBase.query.get(id)
+        variations = VariationModelBase.query.filter_by(id_product=id)
 
         variations.delete()
         session.delete(product)
@@ -231,7 +228,7 @@ def create_group():
         data: dict = request.get_json()
         ids_products = list(data.values())
         for id in ids_products:
-            product = ProductModel.query.get(id)
+            product = ProductModelBase.query.get(id)
             if not product:
                 raise NoResultFound
         group = GroupModel(

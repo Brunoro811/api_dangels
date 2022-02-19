@@ -198,3 +198,67 @@ def validate_register_client(function):
         return function()
 
     return wrapper
+
+
+def validator(
+    date: str = None, phone: str = None, cpf: str = None, zip_code: str = None
+):
+    def received_function(function):
+        @wraps(function)
+        def wrapper(id: int = 0):
+
+            regex_bithdate = (
+                "^(0[1-9]|[12][0-9]|3[01])[\/\-](0[1-9]|1[012])[\/\-]\d{4}$"
+            )
+            regex_phone = "^\([1-9]{2}\)(?:[2-8]|9[0-9])[0-9]{3}\-[0-9]{4}$"
+            regex_cep = "^[0-9]{5}-[0-9]{3}$"
+            regex_cpf = "^[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}\.?[0-9]{2}$"
+            regex_email = "^[\w\.]+@([\w-]+\.)+[\w-]{2,4}$"
+            regex_name = "^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$"
+            regex_password = "^((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$"
+
+            request_json: dict = request.get_json()
+
+            # print("OBJETO VALIDATOR", request_json[zip_code])
+
+            """
+            if request_json.get("birthdate"):
+                if not match(regex_bithdate, request_json["birthdate"]):
+                    return {"error": "birthdate in format incorrect"}, 400
+
+            if request_json.get("phone"):
+                if not match(regex_phone, request_json["phone"]):
+                    return {"error": "phone in format incorrect"}, 400
+
+            if request_json.get("cpf"):
+                if not match(regex_cpf, request_json["cpf"]):
+                    return {"error": "cpf in format incorrect"}, 400
+            """
+
+            if request_json.get(zip_code):
+                if not match(regex_cep, request_json[zip_code]):
+                    return {"error": "cep in format incorrect"}, 400
+            """
+
+            if request_json.get("email"):
+                if not match(regex_email, request_json["email"]):
+                    return {"error": "email in format incorrect"}, 400
+
+            if request_json.get("password"):
+                if not match(regex_password, request_json["password"]):
+                    return {
+                        "error": "password in format incorrect",
+                        "should be": "Password must contain at least one letter uppercase, one lowercase, one number and one special character",
+                    }, 400
+
+            if request_json.get("name"):
+                if not match(regex_name, request_json["name"]):
+                    return {"error": "name in format incorrect"}, 400"""
+
+            if id:
+                return function(id)
+            return function()
+
+        return wrapper
+
+    return received_function

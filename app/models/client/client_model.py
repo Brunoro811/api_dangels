@@ -3,7 +3,7 @@ from datetime import datetime
 
 from app.configs.database import db
 
-from sqlalchemy import Column, ForeignKey, DateTime
+from sqlalchemy import Column, DateTime
 from sqlalchemy.sql import sqltypes as sql
 from sqlalchemy.orm import validates
 from sqlalchemy.orm import relationship

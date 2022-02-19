@@ -18,7 +18,7 @@ class StoreModel(db.Model):
 
     __tablename__ = "stores"
     id_store = Column(sql.Integer, autoincrement=True, primary_key=True)
-    name_store = Column(sql.String(50), nullable=False)
+    name_store = Column(sql.String(50), nullable=False, unique=True)
     street = Column(sql.String(150), nullable=False)
     number = Column(sql.Integer, nullable=False)
     zip_code = Column(sql.String(9), nullable=False)
@@ -26,13 +26,13 @@ class StoreModel(db.Model):
 
     orders = relationship("OrdersModel", backref="orders", uselist=True)
 
+    def normalize(self):
+        return asdict(self)
+
     @validates("name_store")
-    def title(self, key: str, value: str):
+    def title_text(self, key: str, value: str) -> str:
         return value.title()
 
     @validates("street", "other_information")
-    def title(self, key: str, value: str):
+    def capitalize_text(self, key: str, value: str):
         return value.capitalize()
-
-    def normalize(self):
-        return asdict(self)
