@@ -27,12 +27,26 @@
 
  
  # Endpoints
+  Os Endpoints mostrar de forma detalhada como ultilizar cada um, o objeto json a ser enviado, o retorno esperado e os possiveis erros.
  
- ## Users
+ # Categorias
+  A categoria é de produtos é ultilziada para organização dos produtos na loja e ultilizaçãode filtros por categoria. Exemplo : Jeans e Vestidos.
+ ## POST - Criar categoria.
+ ## GET  - Buscar todas as categorias.
+ ## GET  - Buscar uma Categoria especifica.
+ ## DELETE - Deletar categoria. 
+ ## PATH - Atualziar categoria. 
+ 
+ # Users
+ ## POST - Criar usuário.
+ ## GET  - Buscar todas os usuários.
+ ## GET  - Buscar um usuário especifico.
+ ## DELETE - Deletar usuário. 
+ ## PATH - Atualziar usuário. 
  
  ## Produtos
  
- ## Categorias
+ 
  
  ## Clientes
  
