@@ -23,7 +23,6 @@ class UsersCompletedModel:
     def separates_model(
         cls,
         list_keys_users: list[str],
-        list_keys_type_user: list[str],
         list_keys_seller: list[str],
         data_json: dict,
     ) -> dict:
@@ -34,13 +33,11 @@ class UsersCompletedModel:
         for key, value in data_json.items():
             if key in list_keys_users:
                 user[key] = value
-            if key in list_keys_type_user:
-                type_user[key] = value
             if key in list_keys_seller:
                 seller[key] = value
             data: dict = {
                 "user": user,
-                "type_user": type_user,
+                "name_type_user": type_user,
                 "seller": seller,
                 "id_store": id_store,
             }

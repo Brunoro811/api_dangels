@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from app.configs.database import db
 
 from sqlalchemy.sql import sqltypes as sql
-from sqlalchemy import Column
+from sqlalchemy import Column, ForeignKey
 
 
 @dataclass
@@ -13,5 +13,9 @@ class GroupModel(db.Model):
 
     __tablename__ = "group_products"
     id_group = Column(sql.Integer, primary_key=True, autoincrement=True)
-    id_product_one = Column(sql.Integer, nullable=False, unique=True)
-    id_product_two = Column(sql.Integer, nullable=False, unique=True)
+    id_product_one = Column(
+        sql.Integer, ForeignKey("products.id_product"), nullable=False, unique=True
+    )
+    id_product_two = Column(
+        sql.Integer, ForeignKey("products.id_product"), nullable=False, unique=True
+    )

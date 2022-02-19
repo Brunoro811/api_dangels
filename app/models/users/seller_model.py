@@ -4,7 +4,7 @@ from app.configs.database import db
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy.sql import sqltypes as sql
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from app.models.stores.store_model import StoreModel
 
@@ -31,6 +31,10 @@ class SellerModel(db.Model):
 
     def asdict(self):
         return asdict(self)
+
+    @validates("first_name", "last_name")
+    def title(self, key: str, value: str):
+        return value.title()
 
 
 StoreModel.sellers = relationship(

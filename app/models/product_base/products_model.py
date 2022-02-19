@@ -10,7 +10,7 @@ from sqlalchemy.orm import relationship
 
 
 @dataclass
-class ProductModel(db.Model):
+class ProductModelBase(db.Model):
     id_product: int
     code_product: int
     name: str
@@ -23,9 +23,8 @@ class ProductModel(db.Model):
     date_end: Date
     id_category: int
     date_creation: Date
-    id_store: int
 
-    __tablename__ = "products"
+    __tablename__ = "products_base"
     id_product = Column(sql.Integer, autoincrement=True, primary_key=True)
     code_product = Column(sql.Integer, unique=True)
     name = Column(sql.String(50), nullable=False)
@@ -40,11 +39,9 @@ class ProductModel(db.Model):
     id_category = Column(
         sql.Integer, ForeignKey("categorys.id_category"), nullable=False
     )
-    id_store = Column(sql.Integer, ForeignKey("stores.id_store"), nullable=False)
 
-    variations = relationship("VariationModel", backref="product", uselist=True)
-    orders_has_products_product = relationship(
-        "OrdersHasProductsModel", backref="product", uselist=True
+    variations = relationship(
+        "VariationModelBase", backref="product_base", uselist=True
     )
 
     def asdict(self):
