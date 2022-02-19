@@ -14,7 +14,7 @@
 - Deploy 
 
 # Bibliotecas Utilizadas
-## Atenção: as bibliotecas ultilizadas devem ser instaladas em ambiente venv no pyhton.
+## Atenção: as bibliotecas ultilizadas devem ser instaladas em ambiente venv no python.
 
 - SQLAlchemy
 - Pymysql
