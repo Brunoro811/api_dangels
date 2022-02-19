@@ -38,15 +38,6 @@ class UsersModel(db.Model):
     def asdict(self):
         return asdict(self)
 
-    def __asdict__(self):
-        return {
-            "id_user": self.id_user,
-            "user_name": self.user_name,
-            "password": self.password,
-            "id_type_user": self.id_type_user,
-            "id_seller": self.id_seller,
-        }
-
 
 TypeUserModel.users = relationship(
     "UsersModel", order_by=UsersModel.id_type_user, back_populates="types_users"

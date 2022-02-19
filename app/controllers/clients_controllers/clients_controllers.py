@@ -5,7 +5,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import IntegrityError
 
-from app.controllers.decorators import verify_keys
+from app.controllers.decorators import (
+    validate_register_client,
+    verify_keys,
+    verify_types,
+)
 from app.models.client.client_model import ClientModel
 
 
@@ -24,6 +28,22 @@ from app.models.client.client_model import ClientModel
         "zip_code",
     ]
 )
+@verify_types(
+    {
+        "first_name": str,
+        "last_name": str,
+        "street": str,
+        "number": int,
+        "zip_code": str,
+        "country": str,
+        "city": str,
+        "phone": str,
+        "email": str,
+        "birthdate": str,
+        "cpf": str,
+    }
+)
+@validate_register_client
 def create_client():
     try:
         session: Session = current_app.db.session
@@ -91,6 +111,23 @@ def delete_client(id: int):
     ],
     optional_keys=True,
 )
+@verify_types(
+    {
+        "first_name": str,
+        "last_name": str,
+        "street": str,
+        "number": int,
+        "zip_code": str,
+        "country": str,
+        "city": str,
+        "phone": str,
+        "email": str,
+        "birthdate": str,
+        "cpf": str,
+    },
+    optional_keys=True,
+)
+@validate_register_client
 def update_client(id: int):
     session: Session = current_app.db.session
     try:

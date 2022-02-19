@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import UnmappedInstanceError, NoResultFound
 from sqlalchemy.exc import IntegrityError
 from app.controllers.products.products_helpers import help_normalize_variations
+from app.models.product.group_model import GroupModel
 
 
 from app.models.product.product_completed import ProductCompletedModel
@@ -208,5 +209,55 @@ def delete_product(id: int):
 
     except UnmappedInstanceError:
         return {"erro": "Not found product."}, HTTPStatus.NOT_FOUND
+    except Exception as e:
+        raise e
+
+
+@verify_keys(
+    [
+        "id_product_one",
+        "id_product_two",
+    ]
+)
+@verify_types(
+    {
+        "id_product_one": int,
+        "id_product_two": int,
+    }
+)
+def create_group():
+    try:
+        session: Session = current_app.db.session
+        data: dict = request.get_json()
+        ids_products = list(data.values())
+        for id in ids_products:
+            product = ProductModel.query.get(id)
+            if not product:
+                raise NoResultFound
+        group = GroupModel(
+            **{
+                "id_product_one": ids_products[0],
+                "id_product_two": ids_products[1],
+            }
+        )
+        session.add(group)
+        session.commit()
+
+        return jsonify(group), HTTPStatus.CREATED
+    except IntegrityError:
+        return {"error": "Group already exist!"}, HTTPStatus.NOT_FOUND
+    except NoResultFound:
+        return {"error": "Not found"}, HTTPStatus.NOT_FOUND
+    except Exception as e:
+        raise e
+
+
+def get_groups():
+    try:
+        session: Session = current_app.db.session
+        groups = GroupModel.query.all()
+        print("groups -> ", dir(groups))
+
+        return jsonify(groups), HTTPStatus.CREATED
     except Exception as e:
         raise e

@@ -60,5 +60,6 @@ class ClientModel(db.Model):
 
     @validates("birthdate")
     def convert_datetime(self, key: str, value: str) -> str:
+        value = value.replace("-", "/")
         value = datetime.strptime(value, "%d/%m/%Y")
         return value
