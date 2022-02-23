@@ -1,6 +1,7 @@
+from pickletools import optimize
 from flask import current_app, jsonify, request, Response
 from http import HTTPStatus
-
+from PIL import Image
 
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import UnmappedInstanceError, NoResultFound
@@ -98,9 +99,15 @@ def create_images_product(id: int):
         filename = secure_filename(file.filename)
         mimetype = file.mimetype
 
+        # new_file = Image.open(file)
+        # file = new_file.resize((250, 250), Image.ANTIALIAS)
+
         product.image = file.read()
         product.image_mimeType = mimetype
         product.image_name = filename
+
+        print("->")
+        print("->")
 
         session.add(product)
         session.commit()
