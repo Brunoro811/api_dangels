@@ -16,15 +16,7 @@ class ProductCompletedModel:
         list_sizes_product = []
         for size in sizes_product:
             id_color = size.id_color
-            # print("size=>", size)
             list_sizes_product.append(size.asdict())
-
-    # print("list_sizes_product=>", list_sizes_product)
-    #    if product["id_product"] == size.id_product:
-    #        sizes[size.name] = {"name": size.name, "quantity": size.quantity}
-    # product["sizes_product"] = sizes
-
-    # return product
 
     @classmethod
     def separates_model(

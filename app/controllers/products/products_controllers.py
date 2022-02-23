@@ -1,17 +1,20 @@
-from flask import current_app, jsonify, request
+from flask import current_app, jsonify, request, Response
 from http import HTTPStatus
 
 
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import UnmappedInstanceError, NoResultFound
 from sqlalchemy.exc import IntegrityError
+
+from werkzeug.exceptions import BadRequestKeyError
+from werkzeug.utils import secure_filename
+
+
 from app.controllers.products.products_helpers import help_normalize_variations
 from app.models.product.group_model import GroupModel
-
-
 from app.models.product.product_completed import ProductCompletedModel
-from app.models.product_base.products_model import ProductModelBase
-from app.models.product_base.variation_model import VariationModelBase
+from app.models.product.products_model import ProductModel
+from app.models.product.variation_model import VariationModel
 
 from app.controllers.decorators import verify_keys, verify_types
 
@@ -26,6 +29,7 @@ from app.controllers.decorators import verify_keys, verify_types
         "quantity_atacado",
         "sale_value_promotion",
         "sale_value_atacado",
+        "id_store",
     ]
 )
 @verify_types(
@@ -38,6 +42,7 @@ from app.controllers.decorators import verify_keys, verify_types
         "sale_value_promotion": float,
         "sale_value_atacado": float,
         "sale_value_varejo": float,
+        "id_store": int,
     }
 )
 def create_product():
@@ -51,6 +56,7 @@ def create_product():
             "sale_value_promotion",
             "id_category",
             "quantity_atacado",
+            "id_store",
         ]
         keys_colors = ["variations", "color_name"]
         keys_sizes_product = ["sizes_product"]
@@ -61,15 +67,14 @@ def create_product():
         )
 
         product = dict(obj_product_completed["product"])
-        new_product = ProductModelBase(**product)
+        new_product = ProductModel(**product)
 
         list_colors_sizes = [*obj_product_completed["colors_sizes_product"]]
 
         new_product.variations = [
-            VariationModelBase(**{**element, "id_product": new_product.id_product})
+            VariationModel(**{**element, "id_product": new_product.id_product})
             for element in list_colors_sizes
         ]
-
         session.add(new_product)
         session.commit()
 
@@ -82,28 +87,58 @@ def create_product():
         raise e
 
 
-def get_product():
-    product_list = ProductModelBase.query.all()
-    list_products = []
+def create_images_product(id: int):
+    try:
+        session: Session = current_app.db.session
+        product: ProductModel = ProductModel.query.get(id)
+        if not product:
+            raise NoResultFound
 
-    for product in product_list:
-        product: ProductModelBase
-        obj_product_completed = {}
-        obj_product_completed["product"] = product.asdict()
-        obj_product_completed["variations"] = help_normalize_variations(
-            product.variations
-        )
-        list_products.append(obj_product_completed)
-    return jsonify(list_products), HTTPStatus.OK
+        file = request.files["file"]
+        filename = secure_filename(file.filename)
+        mimetype = file.mimetype
+
+        product.image = file.read()
+        product.image_mimeType = mimetype
+        product.image_name = filename
+
+        session.add(product)
+        session.commit()
+
+        return jsonify(""), HTTPStatus.CREATED
+    except BadRequestKeyError:
+        return {"error": "File not found"}, HTTPStatus.NOT_FOUND
+    except NoResultFound:
+        return {"error": "Not found"}, HTTPStatus.NOT_FOUND
+    except Exception as e:
+        raise e
+
+
+def get_image_product(name: str):
+    try:
+        product: ProductModel = ProductModel.query.filter_by(image_name=name).first()
+        if not product:
+            return {"error": "not found image"}, HTTPStatus.NOT_FOUND
+
+        return Response(product.image, mimetype=product.image_mimeType)
+    except Exception as e:
+        raise e
+
+
+def get_product():
+    product_list = ProductModel.query.all()
+
+    return jsonify(product_list), HTTPStatus.OK
 
 
 def get_one_product(id: int):
     try:
-        product = ProductModelBase.query.get(id)
-        product: ProductModelBase
+        product: ProductModel = ProductModel.query.get(id)
+        if not product:
+            raise NoResultFound
 
         obj_product_completed = {}
-        obj_product_completed["product"] = product.asdict()
+        obj_product_completed = {**product.asdict()}
         obj_product_completed["variations"] = help_normalize_variations(
             product.variations
         )
@@ -153,7 +188,7 @@ def update_product(id: int):
         keys_colors = ["variations", "color_name"]
         keys_sizes_product = ["sizes_product"]
 
-        product = ProductModelBase.query.get(id)
+        product = ProductModel.query.get(id)
         if not (product):
             raise NoResultFound
 
@@ -166,8 +201,8 @@ def update_product(id: int):
             for key, value in update_product.items():
                 setattr(product, key, value)
 
-            # session.add(product)
-            # session.commit()
+            session.add(product)
+            session.commit()
 
         if obj_product_completed["variations"]:
             for color_size_update in obj_product_completed["variations"]:
@@ -179,8 +214,8 @@ def update_product(id: int):
                     ):
                         for key, value in color_size_update.items():
                             setattr(product_variations_base_data, key, value)
-            # session.add_all(product.variations)
-            # session.commit()
+            session.add_all(product.variations)
+            session.commit()
 
         return "", HTTPStatus.NO_CONTENT
 
@@ -195,8 +230,8 @@ def update_product(id: int):
 def delete_product(id: int):
     try:
         session: Session = current_app.db.session
-        product = ProductModelBase.query.get(id)
-        variations = VariationModelBase.query.filter_by(id_product=id)
+        product = ProductModel.query.get(id)
+        variations = VariationModel.query.filter_by(id_product=id)
 
         variations.delete()
         session.delete(product)
@@ -228,7 +263,7 @@ def create_group():
         data: dict = request.get_json()
         ids_products = list(data.values())
         for id in ids_products:
-            product = ProductModelBase.query.get(id)
+            product = ProductModel.query.get(id)
             if not product:
                 raise NoResultFound
         group = GroupModel(
@@ -251,7 +286,7 @@ def create_group():
 
 def get_groups():
     try:
-        session: Session = current_app.db.session
+
         groups = GroupModel.query.all()
         print("groups -> ", dir(groups))
 

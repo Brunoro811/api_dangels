@@ -9,7 +9,6 @@ def help_normalize_variations(variations: list[dict]) -> list[dict]:
             list_normalized.append(
                 {
                     "size": element.size,
-                    "image": element.image,
                     "quantity": element.quantity,
                 }
             )
@@ -26,7 +25,6 @@ def help_normalize_variations(variations: list[dict]) -> list[dict]:
             list_normalized.append(
                 {
                     "size": element.size,
-                    "image": element.image,
                     "quantity": element.quantity,
                 }
             )

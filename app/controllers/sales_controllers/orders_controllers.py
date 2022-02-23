@@ -23,7 +23,6 @@ from app.models.users.orders_seller import OrdersModel
 
 
 def verify_order_empty_and_delete(list_or_number_id_order: "int or list[int]") -> None:
-    print("VERIFYCA")
     session: Session = current_app.db.session
     if type(list_or_number_id_order) == list:
         for id_order in list_or_number_id_order:

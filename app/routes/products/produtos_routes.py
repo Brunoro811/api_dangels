@@ -6,7 +6,11 @@ bp = Blueprint("products", __name__, url_prefix="/products")
 
 bp.get("")(products_controllers.get_product)
 bp.get("<int:id>")(products_controllers.get_one_product)
+
 bp.post("")(products_controllers.create_product)
+bp.post("/images/<int:id>")(products_controllers.create_images_product)
+bp.get("/images/<name>")(products_controllers.get_image_product)
+
 bp.patch("<int:id>")(products_controllers.update_product)
 bp.delete("<int:id>")(products_controllers.delete_product)
 

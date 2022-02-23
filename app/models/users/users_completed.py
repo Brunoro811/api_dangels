@@ -8,7 +8,6 @@ class UsersCompletedModel:
 
     id_user: int
     user_name: str
-    password: str
     id_type_user: int
     name_type_user: str
     permission: int
