@@ -22,6 +22,3 @@ def init_app(app: Flask):
     from app.models.users.orders_seller import OrdersModel
     from app.models.client.client_model import ClientModel
     from app.models.users.orders_has_products import OrdersHasProductsModel
-
-    from app.models.product_base.products_model import ProductModelBase
-    from app.models.product_base.variation_model import VariationModelBase

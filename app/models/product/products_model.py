@@ -6,7 +6,7 @@ from app.configs.database import db
 
 from sqlalchemy.sql import sqltypes as sql
 from sqlalchemy import Column, Date, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 
 @dataclass
@@ -24,6 +24,8 @@ class ProductModel(db.Model):
     id_category: int
     date_creation: Date
     id_store: int
+    image_name: str
+    link_image: str = None
 
     __tablename__ = "products"
     id_product = Column(sql.Integer, autoincrement=True, primary_key=True)
@@ -41,6 +43,9 @@ class ProductModel(db.Model):
         sql.Integer, ForeignKey("categorys.id_category"), nullable=False
     )
     id_store = Column(sql.Integer, ForeignKey("stores.id_store"), nullable=False)
+    image = Column(sql.LargeBinary)
+    image_name = Column(sql.Text)
+    image_mimeType = Column(sql.Text)
 
     variations = relationship("VariationModel", backref="product", uselist=True)
     orders_has_products_product = relationship(
@@ -61,3 +66,12 @@ class ProductModel(db.Model):
                     "quantity",
                     (color_size_stock.quantity - product_variation["quantity"]),
                 )
+
+    @property
+    def link_image(self):
+        return self.link_image
+
+    @link_image.getter
+    def link_image(self, text: str = "http://127.0.0.1:5000/api/products/images/"):
+        text = f"{text}{self.image_name}"
+        return text

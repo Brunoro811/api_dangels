@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.models.stores.store_model import StoreModel
 from app.controllers.decorators import verify_keys, verify_types, validator
+from app.auth import verify_token
 
 
 @verify_keys(["name_store", "number", "other_information", "street", "zip_code"])
@@ -31,6 +32,7 @@ def create_stores():
     return jsonify(new_store), HTTPStatus.CREATED
 
 
+@verify_token
 def get_stores():
     try:
         stores_all = StoreModel.query.all()
