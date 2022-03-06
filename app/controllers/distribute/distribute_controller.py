@@ -66,7 +66,7 @@ def create_distribute_product():
         raise e
 
 
-@verify_token
+# @verify_token
 def get_all_products_for_store(id: int):
     try:
         products = ProductModel.query.filter_by(id_store=id).all()

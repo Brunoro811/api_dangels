@@ -26,7 +26,7 @@ class StoreModel(db.Model):
 
     orders = relationship("OrdersModel", backref="orders", uselist=True)
 
-    def normalize(self):
+    def asdict(self):
         return asdict(self)
 
     @validates("name_store")

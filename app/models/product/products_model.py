@@ -1,7 +1,8 @@
 from dataclasses import asdict, dataclass
+
 from datetime import date
 
-from flask import current_app
+
 from app.configs.database import db
 
 from sqlalchemy.sql import sqltypes as sql
@@ -15,17 +16,19 @@ class ProductModel(db.Model):
     code_product: int
     name: str
     cost_value: float
-    sale_value_varejo: float
-    sale_value_atacado: float
-    quantity_atacado: int
-    sale_value_promotion: float
     date_start: Date
     date_end: Date
     id_category: int
     date_creation: Date
     id_store: int
     image_name: str
+    quantity_atacado: int
+    sale_value_atacado: float
+    sale_value_varejo: float
+    sale_value_promotion: float
+    sale_value: float = 0
     link_image: str = None
+    is_promotion: bool = False
 
     __tablename__ = "products"
     id_product = Column(sql.Integer, autoincrement=True, primary_key=True)
@@ -47,10 +50,17 @@ class ProductModel(db.Model):
     image_name = Column(sql.Text)
     image_mimeType = Column(sql.Text)
 
+    store = relationship("StoreModel", backref="product", uselist=False)
+
     variations = relationship("VariationModel", backref="product", uselist=True)
+
     orders_has_products_product = relationship(
         "OrdersHasProductsModel", backref="product", uselist=True
     )
+
+    @validates("size")
+    def uppeer_case(self, value: str):
+        return value.upper()
 
     def asdict(self):
         return asdict(self)
@@ -75,3 +85,19 @@ class ProductModel(db.Model):
     def link_image(self, text: str = "http://127.0.0.1:5000/api/products/images/"):
         text = f"{text}{self.image_name}"
         return text
+
+    @property
+    def sale_value(self):
+        return self.sale_value
+
+    @sale_value.getter
+    def sale_value(self, value: str = 0):
+        value = self.sale_value_varejo
+        date_now = date.today()
+        if self.date_start:
+            ...
+            if date_now >= self.date_start and date_now <= self.date_end:
+                self.is_promotion = True
+                value = self.sale_value_promotion
+
+        return value
