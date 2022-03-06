@@ -5,6 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from app.controllers.exc.user_erros import BodyNoContent
 from app.models.users.users_model import UsersModel
+from app.models.stores.store_model import StoreModel
 
 from app.auth import token_creator
 
@@ -26,11 +27,14 @@ def create_login():
             raise NoResultFound
 
         token = token_creator.create(uid=1)
-
+        store: StoreModel = StoreModel.query.get(found_user.sellers.id_store)
+        print("STORE ->", store)
         return (
             jsonify(
                 {
                     **found_user.asdict(),
+                    "id_store": store.id_store,
+                    "name_store": store.name_store,
                     "token": token,
                 }
             ),

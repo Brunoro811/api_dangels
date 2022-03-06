@@ -32,7 +32,7 @@ def create_stores():
     return jsonify(new_store), HTTPStatus.CREATED
 
 
-@verify_token
+# @verify_token
 def get_stores():
     try:
         stores_all = StoreModel.query.all()

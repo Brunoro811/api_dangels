@@ -97,9 +97,12 @@ def create_sale():
                     }
                 )
             )
-        session.add_all(product_get.variations)
-        session.add_all(orders_products)
-        session.commit()
+        print("")
+        print("Product variations -> ", product_get.variations)
+        print("")
+        # session.add_all(product_get.variations)
+        # session.add_all(orders_products)
+        # session.commit()
 
         return "", HTTPStatus.CREATED
     except werkzeug.exceptions.NotFound as e:

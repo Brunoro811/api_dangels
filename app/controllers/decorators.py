@@ -1,24 +1,33 @@
+import datetime
 from functools import wraps
 from http import HTTPStatus as httpstatus
+import json
 
 from flask import request
 from re import match
 
-from app.controllers.exc.user_erros import UserInvalid
+from app.helpers.get_data_json_multi_part_form import get_data
 
 
 def verify_keys(expected_keys: list, optional_keys: bool = False):
     def received_func_path(func):
         @wraps(func)
         def wrapper(id: int = 0):
-            request_json: dict = request.get_json()
-            request_json_keys = sorted(list(request_json.keys()))
-            request_json_keys.sort()
-            expected_keys.sort()
-            try:
 
+            try:
                 key_error = []
                 count = 0
+                data = get_data()
+                """if request.get_json():
+                    data = request.get_json()
+                else:
+                    data: dict = json.loads(request.form.get("product"))
+                    
+                    data.pop("file")"""
+
+                request_json_keys = sorted(list(data.keys()))
+                request_json_keys.sort()
+                expected_keys.sort()
 
                 if optional_keys:
                     for element in request_json_keys:
@@ -29,10 +38,6 @@ def verify_keys(expected_keys: list, optional_keys: bool = False):
                     if len(expected_keys) > len(request_json_keys):
                         return {
                             "error": "some keys is missing!"
-                        }, httpstatus.UNPROCESSABLE_ENTITY
-                    if len(expected_keys) < len(request_json_keys):
-                        return {
-                            "error": "some keys is left over!"
                         }, httpstatus.UNPROCESSABLE_ENTITY
 
                     for key in request_json_keys:
@@ -51,6 +56,7 @@ def verify_keys(expected_keys: list, optional_keys: bool = False):
                     "available_keys": expected_keys,
                     "wrong_keys_sended": key_error,
                 }, 422
+
             except Exception as e:
                 raise e
 
@@ -63,13 +69,33 @@ def verify_types(correct_types: dict, optional_keys: bool = False):
     def received_function(function):
         @wraps(function)
         def wrapper(id: int = None):
-            data: dict = request.get_json()
             try:
+
                 key_error = []
+                data = None
+                data = get_data()
+                """if request.get_json():
+                    data = request.get_json()
+                else:
+                    data: dict = json.loads(request.form.get("product"))
+                    data.pop("file")"""
+
                 if not (optional_keys):
                     for key, value in correct_types.items():
-                        if type(data[key]) != value:
-                            key_error.append(data[key])
+                        if type(value) == list:
+                            error = None
+                            for element in value:
+                                if type(data[key]) != element:
+                                    error = data[key]
+                                else:
+                                    error = None
+                                    break
+                            if error:
+                                key_error.append(error)
+                        else:
+                            if type(data[key]) != value:
+                                key_error.append(data[key])
+
                 else:
                     for key, value in correct_types.items():
                         if not (data.get(key, None) == None):
@@ -86,6 +112,7 @@ def verify_types(correct_types: dict, optional_keys: bool = False):
                     "error": "value with type incorrect!",
                     "received wrong": key_error,
                 }, httpstatus.UNPROCESSABLE_ENTITY
+
             except Exception as e:
                 raise e
 
@@ -208,6 +235,7 @@ def validator(
     zip_code: str = None,
     email=None,
     password=None,
+    birthdate: str = None,
 ):
     def received_function(function):
         @wraps(function)
@@ -225,8 +253,17 @@ def validator(
 
             request_json: dict = request.get_json()
 
-            if request_json.get("birthdate"):
-                if not match(regex_bithdate, request_json["birthdate"]):
+            if request_json.get(date):
+                date_now = datetime.date.today()
+                date_passed = request_json[date]
+
+                if not date_now >= date_passed:
+                    return {"error": "that date has passed"}, 400
+                # if not match(regex_bithdate, request_json[date]):
+                #    return {"error": "date in format incorrect"}, 400
+
+            if request_json.get(birthdate):
+                if not match(regex_bithdate, request_json[birthdate]):
                     return {"error": "birthdate in format incorrect"}, 400
 
             if request_json.get(phone):

@@ -27,7 +27,6 @@ def create_category():
 def get_all_category():
     try:
         categorys = CategoryModel.query.all()
-        print("all categorys", categorys)
         return jsonify(categorys), httpstatus.OK
     except Exception as e:
         raise e
