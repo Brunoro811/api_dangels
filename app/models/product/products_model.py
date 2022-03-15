@@ -1,6 +1,6 @@
 from dataclasses import asdict, dataclass
 
-from datetime import date
+from datetime import date, datetime
 import os
 
 from app.configs.database import db
@@ -16,8 +16,7 @@ class ProductModel(db.Model):
     code_product: int
     name: str
     cost_value: float
-    date_start: Date
-    date_end: Date
+
     id_category: int
     date_creation: Date
     id_store: int
@@ -31,7 +30,8 @@ class ProductModel(db.Model):
     store: dict
     category: dict
     """ Relacionamentos """
-
+    date_start_promotion: Date = None
+    date_end_promotion: Date = None
     sale_value: float = 0
     link_image: str = None
     is_promotion: bool = False
@@ -80,6 +80,22 @@ class ProductModel(db.Model):
                     (color_size_stock.quantity - product_variation["quantity"]),
                 )
 
+    @validates("sale_value_promotion")
+    def validate_sale_value_promotion(self, key: str, value: str):
+        if value == 0:
+            return None
+        return value
+
+    @validates("date_start", "date_end")
+    def valdiate_date(self, key: str, value: str):
+        if value == "":
+            return None
+        return value
+
+    @validates("name")
+    def title(self, key: str, value: str):
+        return value.title()
+
     @property
     def link_image(self):
         return self.link_image
@@ -105,18 +121,28 @@ class ProductModel(db.Model):
 
         return value
 
-    @validates("sale_value_promotion")
-    def validate_sale_value_promotion(self, key: str, value: str):
-        if value == 0:
-            return None
+    """ format dates """
+
+    @property
+    def date_start_promotion(self):
+        return self.date_start_promotion
+
+    @date_start_promotion.getter
+    def date_start_promotion(self, value: str = None):
+        partern = "%d/%m/%Y"
+        if self.date_start:
+            value = datetime.strftime(self.date_start, partern)
         return value
 
-    @validates("date_start", "date_end")
-    def valdiate_date(self, key: str, value: str):
-        if value == "":
-            return None
+    @property
+    def date_end_promotion(self):
+        return self.date_end_promotion
+
+    @date_end_promotion.getter
+    def date_end_promotion(self, value: str = None):
+        partern = "%d/%m/%Y"
+        if self.date_end:
+            value = datetime.strftime(self.date_end, partern)
         return value
 
-    @validates("name")
-    def title(self, key: str, value: str):
-        return value.title()
+    """ format dates """

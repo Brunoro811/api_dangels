@@ -16,6 +16,8 @@ def get_one_product(id: int):
             raise NoResultFound
 
         obj_product_completed = {}
+        print("Product: ", product.date_start)
+        print("Product type: ", type(product.date_start))
         obj_product_completed = {
             **product.asdict(),
             **help_normalize_variations(product.variations)[0],
