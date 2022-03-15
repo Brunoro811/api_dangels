@@ -18,12 +18,6 @@ def verify_keys(expected_keys: list, optional_keys: bool = False):
                 key_error = []
                 count = 0
                 data = get_data()
-                """if request.get_json():
-                    data = request.get_json()
-                else:
-                    data: dict = json.loads(request.form.get("product"))
-                    
-                    data.pop("file")"""
 
                 request_json_keys = sorted(list(data.keys()))
                 request_json_keys.sort()
@@ -74,6 +68,7 @@ def verify_types(correct_types: dict, optional_keys: bool = False):
                 key_error = []
                 data = None
                 data = get_data()
+                print("DATA -> ", data)
                 """if request.get_json():
                     data = request.get_json()
                 else:
@@ -98,12 +93,24 @@ def verify_types(correct_types: dict, optional_keys: bool = False):
 
                 else:
                     for key, value in correct_types.items():
-                        if not (data.get(key, None) == None):
+                        if type(value) == list:
+                            error = None
+                            for element in value:
+                                if not (data.get(key, None) == None):
+                                    if type(data[key]) != element:
+                                        error = data[key]
+                                    else:
+                                        error = None
+                                        break
+                            if error:
+                                key_error.append(error)
+                        elif not (data.get(key, None) == None):
                             if type(data[key]) != value:
                                 key_error.append(data[key])
 
                 if key_error:
                     raise TypeError
+
                 if not id:
                     return function()
                 return function(id)
@@ -259,8 +266,6 @@ def validator(
 
                 if not date_now >= date_passed:
                     return {"error": "that date has passed"}, 400
-                # if not match(regex_bithdate, request_json[date]):
-                #    return {"error": "date in format incorrect"}, 400
 
             if request_json.get(birthdate):
                 if not match(regex_bithdate, request_json[birthdate]):

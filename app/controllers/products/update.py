@@ -17,6 +17,7 @@ from app.helpers.get_data_json_multi_part_form import get_data, get_files
     [
         "cost_value",
         "id_category",
+        "id_store",
         "name",
         "sale_value_varejo",
         "variations",
@@ -28,14 +29,15 @@ from app.helpers.get_data_json_multi_part_form import get_data, get_files
 )
 @verify_types(
     {
-        "cost_value": float,
+        "cost_value": [float, int],
         "id_category": int,
+        "id_store": int,
         "name": str,
+        "sale_value_varejo": [float, int],
         "variations": list,
         "quantity_atacado": int,
-        "sale_value_promotion": float,
-        "sale_value_atacado": float,
-        "sale_value_varejo": float,
+        "sale_value_promotion": [float, int],
+        "sale_value_atacado": [float, int],
     },
     optional_keys=True,
 )

@@ -1,8 +1,8 @@
-"""cretae database
+"""create tables in postgress
 
-Revision ID: fbd5e0f88737
-Revises: d1191bb92a01
-Create Date: 2022-02-22 20:03:15.569101
+Revision ID: 197711839c1b
+Revises: 
+Create Date: 2022-03-13 18:25:38.915558
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fbd5e0f88737'
-down_revision = 'd1191bb92a01'
+revision = '197711839c1b'
+down_revision = None
 branch_labels = None
 depends_on = None
 

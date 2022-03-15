@@ -1,21 +1,30 @@
 from flask import Blueprint
 
-from app.controllers.products import products_controllers
-from app.controllers.products import update_product
+
+from app.controllers.products import (
+    update_product,
+    get_one_product,
+    delete_product,
+    get_all_products_all_stores,
+    create_product,
+    get_image_product,
+    create_update_images_product,
+    get_groups_products,
+    create_group_products,
+)
 
 bp = Blueprint("products", __name__, url_prefix="/products")
 
-bp.get("")(products_controllers.get_product)
-bp.get("/<int:id>")(products_controllers.get_one_product)
-bp.get("/images/<name>")(products_controllers.get_image_product)
-bp.get("/completed")(products_controllers.get_all_product_completed)
-bp.get("/group")(products_controllers.get_groups)
+bp.get("/<int:id>")(get_one_product)
+bp.get("/images/<name>")(get_image_product)
+bp.get("/completed")(get_all_products_all_stores)
+bp.get("/group")(get_groups_products)
 
-bp.post("")(products_controllers.create_product)
-bp.post("/images/<int:id>")(products_controllers.create_images_product)
+bp.post("")(create_product)
+bp.post("/images/<int:id>")(create_update_images_product)
 
 bp.patch("<int:id>")(update_product)
 
-bp.delete("<int:id>")(products_controllers.delete_product)
+bp.delete("<int:id>")(delete_product)
 
-bp.post("/group")(products_controllers.create_group)
+bp.post("/group")(create_group_products)

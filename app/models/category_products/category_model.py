@@ -14,7 +14,6 @@ class CategoryModel(db.Model):
     __tablename__ = "categorys"
     id_category = Column(sql.Integer, autoincrement=True, primary_key=True)
     name = Column(sql.String(50), unique=True, nullable=False)
-    products = db.relationship("ProductModel", backref="category")
 
     @validates("name")
     def title(self, key, value: str):
