@@ -15,9 +15,10 @@ class UsersModel(db.Model):
 
     id_user: int
     user_name: str
-    id_type_user: int
     id_seller: int
     email: str
+    types_users: dict
+    sellers: dict
 
     __tablename__ = "users"
     id_user = Column(sql.Integer, autoincrement=True, primary_key=True)

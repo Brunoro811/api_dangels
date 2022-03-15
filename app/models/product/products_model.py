@@ -1,7 +1,7 @@
 from dataclasses import asdict, dataclass
 
 from datetime import date
-
+import os
 
 from app.configs.database import db
 
@@ -26,6 +26,11 @@ class ProductModel(db.Model):
     sale_value_atacado: float
     sale_value_varejo: float
     sale_value_promotion: float
+    """ Relacionamentos """
+    store: dict
+    category: dict
+    """ Relacionamentos """
+
     sale_value: float = 0
     link_image: str = None
     is_promotion: bool = False
@@ -51,16 +56,13 @@ class ProductModel(db.Model):
     image_mimeType = Column(sql.Text)
 
     store = relationship("StoreModel", backref="product", uselist=False)
+    category = relationship("CategoryModel", backref="category", uselist=False)
 
     variations = relationship("VariationModel", backref="product", uselist=True)
 
     orders_has_products_product = relationship(
         "OrdersHasProductsModel", backref="product", uselist=True
     )
-
-    @validates("size")
-    def uppeer_case(self, value: str):
-        return value.upper()
 
     def asdict(self):
         return asdict(self)
@@ -82,7 +84,7 @@ class ProductModel(db.Model):
         return self.link_image
 
     @link_image.getter
-    def link_image(self, text: str = "http://127.0.0.1:5000/api/products/images/"):
+    def link_image(self, text: str = os.getenv("URL_PRODUCT_IMAGE")):
         text = f"{text}{self.image_name}"
         return text
 
@@ -101,3 +103,11 @@ class ProductModel(db.Model):
                 value = self.sale_value_promotion
 
         return value
+
+    @validates("name")
+    def title(self, key: str, value: str):
+        return value.title()
+
+    @validates("size")
+    def uppeer_case(self, key: str, value: str):
+        return value.upper()

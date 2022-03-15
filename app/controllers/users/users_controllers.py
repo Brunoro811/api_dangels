@@ -32,7 +32,7 @@ from app.auth import verify_token
         "user_name",
         "name_type_user",
         "password",
-        "permission",
+        # "permission",
         "first_name",
         "last_name",
         "id_store",
@@ -46,7 +46,7 @@ from app.auth import verify_token
         "id_store": int,
         "last_name": str,
         "name_type_user": str,
-        "permission": int,
+        # "permission": int,
         "user_name": str,
     }
 )
@@ -181,7 +181,7 @@ def delete_users(id: int):
 def get_users():
     users = UsersModel.query.all()
 
-    list_users = []
+    """list_users = []
     for user in users:
         list_users.append(
             UsersCompletedModel(
@@ -191,9 +191,9 @@ def get_users():
                     **user.asdict(),
                 }
             )
-        )
+        )"""
 
-    return jsonify(list_users), HTTPStatus.OK
+    return jsonify(users), HTTPStatus.OK
 
 
 def get_one_users(id: int):
