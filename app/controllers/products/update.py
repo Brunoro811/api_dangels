@@ -52,8 +52,6 @@ def update_product(data: dict, id: int):
         obj_product_completed = ProductCompletedModel.separates_model_for_update(
             keys_product, keys_colors, keys_sizes_product, data
         )
-        print("")
-        print("obj_product_completed-> ", obj_product_completed)
 
         if obj_product_completed["product"]:
             update_product = dict(obj_product_completed["product"])
@@ -61,19 +59,20 @@ def update_product(data: dict, id: int):
                 setattr(product, key, value)
 
         if obj_product_completed["variations"]:
+            key = None
+            value = None
             for color_size_update in obj_product_completed["variations"]:
-                for product_variations_base_data in product.variations:
-                    print("")
-                    print(
-                        "product_variations_base_data: ", product_variations_base_data
-                    )
 
-                    """if (
-                        product_variations_base_data.color == color_size_update["color"]
-                        and product_variations_base_data.size
-                        == color_size_update["size"]
-                    ):"""
+                for product_variations_base_data in product.variations:
                     for key, value in color_size_update.items():
+                        if (
+                            product_variations_base_data.color
+                            == color_size_update["color"]
+                            and product_variations_base_data.size
+                            == color_size_update["size"]
+                        ):
+                            setattr(product_variations_base_data, key, value)
+                    if product_variations_base_data.color != color_size_update["color"]:
                         setattr(product_variations_base_data, key, value)
 
         files = get_files()
