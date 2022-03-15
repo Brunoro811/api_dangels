@@ -3,6 +3,7 @@ from app.configs.database import db
 
 from sqlalchemy.sql import sqltypes as sql
 from sqlalchemy import Column, ForeignKey
+from sqlalchemy.orm import validates
 
 
 @dataclass
@@ -22,3 +23,11 @@ class VariationModel(db.Model):
 
     def asdict(self):
         return asdict(self)
+
+    @validates("size")
+    def uppeer_case(self, key: str, value: str):
+        return value.upper()
+
+    @validates("title")
+    def title(self, key: str, value: str):
+        return value.title()

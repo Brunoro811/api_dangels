@@ -26,6 +26,7 @@ class ProductModel(db.Model):
     sale_value_atacado: float
     sale_value_varejo: float
     sale_value_promotion: float
+
     """ Relacionamentos """
     store: dict
     category: dict
@@ -45,8 +46,8 @@ class ProductModel(db.Model):
     sale_value_atacado = Column(sql.Float(2), nullable=False)
     quantity_atacado = Column(sql.Integer, nullable=False)
     sale_value_promotion = Column(sql.Float(2))
-    date_start = Column(sql.Date, default=date.today())
-    date_end = Column(sql.Date, default=date.today())
+    date_start = Column(sql.Date, default=None)
+    date_end = Column(sql.Date, default=None)
     id_category = Column(
         sql.Integer, ForeignKey("categorys.id_category"), nullable=False
     )
@@ -97,17 +98,25 @@ class ProductModel(db.Model):
         value = self.sale_value_varejo
         date_now = date.today()
         if self.date_start:
-            ...
-            if date_now >= self.date_start and date_now <= self.date_end:
-                self.is_promotion = True
-                value = self.sale_value_promotion
+            if self.date_start and self.date_end:
+                if date_now >= self.date_start and date_now <= self.date_end:
+                    self.is_promotion = True
+            value = self.sale_value_promotion
 
+        return value
+
+    @validates("sale_value_promotion")
+    def validate_sale_value_promotion(self, key: str, value: str):
+        if value == 0:
+            return None
+        return value
+
+    @validates("date_start", "date_end")
+    def valdiate_date(self, key: str, value: str):
+        if value == "":
+            return None
         return value
 
     @validates("name")
     def title(self, key: str, value: str):
         return value.title()
-
-    @validates("size")
-    def uppeer_case(self, key: str, value: str):
-        return value.upper()
