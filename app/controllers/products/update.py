@@ -1,34 +1,18 @@
-from flask import current_app
+from flask import current_app, jsonify
 from http import HTTPStatus
 
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
+from app.decorators import verify_payload
 
 from app.models.product.product_completed import ProductCompletedModel
 from app.models.product.products_model import ProductModel
 
-
-from app.controllers.decorators import verify_keys, verify_types
-
-from app.helpers.get_data_json_multi_part_form import get_data, get_files
+from app.helpers.get_data_json_multi_part_form import get_files
 
 
-@verify_keys(
-    [
-        "cost_value",
-        "id_category",
-        "id_store",
-        "name",
-        "sale_value_varejo",
-        "variations",
-        "quantity_atacado",
-        "sale_value_promotion",
-        "sale_value_atacado",
-    ],
-    optional_keys=True,
-)
-@verify_types(
-    {
+@verify_payload(
+    fields_and_types={
         "cost_value": [float, int],
         "id_category": int,
         "id_store": int,
@@ -38,19 +22,30 @@ from app.helpers.get_data_json_multi_part_form import get_data, get_files
         "quantity_atacado": int,
         "sale_value_promotion": [float, int],
         "sale_value_atacado": [float, int],
-    },
-    optional_keys=True,
+        "date_start": str,
+        "date_end": str,
+    }
 )
-def update_product(id: int):
+def update_product(data: dict, id: int):
     session: Session = current_app.db.session
     try:
-        data = get_data()
 
-        keys_product = ["name", "id_category", "cost_value", "sale_value"]
+        keys_product = [
+            "cost_value",
+            "id_category",
+            "id_store",
+            "name",
+            "sale_value_varejo",
+            "quantity_atacado",
+            "sale_value_promotion",
+            "sale_value_atacado",
+            "date_start",
+            "date_end",
+        ]
         keys_colors = ["variations", "color_name"]
         keys_sizes_product = ["sizes_product"]
 
-        product = ProductModel.query.get(id)
+        product: ProductModel = ProductModel.query.get(id)
         if not (product):
             raise NoResultFound
 
@@ -64,22 +59,28 @@ def update_product(id: int):
                 setattr(product, key, value)
 
         if obj_product_completed["variations"]:
+            key = None
+            value = None
             for color_size_update in obj_product_completed["variations"]:
+
                 for product_variations_base_data in product.variations:
-                    if (
-                        product_variations_base_data.color == color_size_update["color"]
-                        and product_variations_base_data.size
-                        == color_size_update["size"]
-                    ):
-                        for key, value in color_size_update.items():
+                    for key, value in color_size_update.items():
+                        if (
+                            product_variations_base_data.color
+                            == color_size_update["color"]
+                            and product_variations_base_data.size
+                            == color_size_update["size"]
+                        ):
                             setattr(product_variations_base_data, key, value)
+                    if product_variations_base_data.color != color_size_update["color"]:
+                        setattr(product_variations_base_data, key, value)
+
         files = get_files()
         if files:
             for file in files:
                 product.image = file.file_bin
                 product.image_name = file.filename
                 product.image_mimetype = file.mimetype
-
         session.commit()
 
         return "", HTTPStatus.NO_CONTENT

@@ -1,6 +1,6 @@
 from dataclasses import asdict, dataclass
 
-from datetime import date
+from datetime import date, datetime
 import os
 
 from app.configs.database import db
@@ -9,6 +9,8 @@ from sqlalchemy.sql import sqltypes as sql
 from sqlalchemy import Column, Date, ForeignKey
 from sqlalchemy.orm import relationship, validates
 
+from re import match
+
 
 @dataclass
 class ProductModel(db.Model):
@@ -16,8 +18,6 @@ class ProductModel(db.Model):
     code_product: int
     name: str
     cost_value: float
-    date_start: Date
-    date_end: Date
     id_category: int
     date_creation: Date
     id_store: int
@@ -26,11 +26,13 @@ class ProductModel(db.Model):
     sale_value_atacado: float
     sale_value_varejo: float
     sale_value_promotion: float
+
     """ Relacionamentos """
     store: dict
     category: dict
     """ Relacionamentos """
-
+    date_start_promotion: Date = None
+    date_end_promotion: Date = None
     sale_value: float = 0
     link_image: str = None
     is_promotion: bool = False
@@ -45,8 +47,8 @@ class ProductModel(db.Model):
     sale_value_atacado = Column(sql.Float(2), nullable=False)
     quantity_atacado = Column(sql.Integer, nullable=False)
     sale_value_promotion = Column(sql.Float(2))
-    date_start = Column(sql.Date, default=date.today())
-    date_end = Column(sql.Date, default=date.today())
+    date_start = Column(sql.Date, default=None)
+    date_end = Column(sql.Date, default=None)
     id_category = Column(
         sql.Integer, ForeignKey("categorys.id_category"), nullable=False
     )
@@ -79,6 +81,22 @@ class ProductModel(db.Model):
                     (color_size_stock.quantity - product_variation["quantity"]),
                 )
 
+    @validates("sale_value_promotion")
+    def validate_sale_value_promotion(self, key: str, value: str):
+        if value == 0:
+            return None
+        return value
+
+    @validates("date_start", "date_end")
+    def valdiate_date(self, key: str, value: str):
+        if value == "":
+            return None
+        return value
+
+    @validates("name")
+    def title(self, key: str, value: str):
+        return value.title()
+
     @property
     def link_image(self):
         return self.link_image
@@ -96,18 +114,48 @@ class ProductModel(db.Model):
     def sale_value(self, value: str = 0):
         value = self.sale_value_varejo
         date_now = date.today()
-        if self.date_start:
-            ...
+
+        if isinstance(self.date_start, date) and isinstance(self.date_end, date):
             if date_now >= self.date_start and date_now <= self.date_end:
                 self.is_promotion = True
-                value = self.sale_value_promotion
+        value = self.sale_value_promotion
 
         return value
 
-    @validates("name")
-    def title(self, key: str, value: str):
-        return value.title()
+    """ format dates """
 
-    @validates("size")
-    def uppeer_case(self, key: str, value: str):
-        return value.upper()
+    @property
+    def date_start_promotion(self):
+        return self.date_start_promotion
+
+    @date_start_promotion.getter
+    def date_start_promotion(self, value: str = None):
+
+        partern = "%d/%m/%Y"
+        if isinstance(
+            self.date_start,
+            date,
+        ):
+            value = datetime.strftime(self.date_start, partern)
+        else:
+            value = self.date_start
+        return value
+
+    @property
+    def date_end_promotion(self):
+        return self.date_end_promotion
+
+    @date_end_promotion.getter
+    def date_end_promotion(self, value: str = None):
+
+        partern = "%d/%m/%Y"
+        if isinstance(
+            self.date_end,
+            date,
+        ):
+            value = datetime.strftime(self.date_end, partern)
+        else:
+            value = self.date_end
+        return value
+
+    """ format dates """

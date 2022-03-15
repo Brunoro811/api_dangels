@@ -23,8 +23,8 @@ from app.helpers import get_files
         "sale_value_varejo": [int, float],
         "id_store": int,
         "sale_value_promotion": [int, float],
-        "start": str,
-        "end": str,
+        "date_start": str,
+        "date_end": str,
     },
     optional=["sale_value_promotion", "start", "end"],
 )
@@ -39,6 +39,9 @@ def create_product(data: dict):
             "id_category",
             "quantity_atacado",
             "id_store",
+            "sale_value_promotion",
+            "date_start",
+            "date_end",
         ]
         keys_colors = ["variations", "color_name"]
         keys_sizes_product = ["sizes_product"]
