@@ -9,6 +9,8 @@ from sqlalchemy.sql import sqltypes as sql
 from sqlalchemy import Column, Date, ForeignKey
 from sqlalchemy.orm import relationship, validates
 
+from re import match
+
 
 @dataclass
 class ProductModel(db.Model):
@@ -16,7 +18,6 @@ class ProductModel(db.Model):
     code_product: int
     name: str
     cost_value: float
-
     id_category: int
     date_creation: Date
     id_store: int
@@ -113,11 +114,11 @@ class ProductModel(db.Model):
     def sale_value(self, value: str = 0):
         value = self.sale_value_varejo
         date_now = date.today()
-        if self.date_start:
-            if self.date_start and self.date_end:
-                if date_now >= self.date_start and date_now <= self.date_end:
-                    self.is_promotion = True
-            value = self.sale_value_promotion
+
+        if isinstance(self.date_start, date) and isinstance(self.date_end, date):
+            if date_now >= self.date_start and date_now <= self.date_end:
+                self.is_promotion = True
+        value = self.sale_value_promotion
 
         return value
 
@@ -129,9 +130,15 @@ class ProductModel(db.Model):
 
     @date_start_promotion.getter
     def date_start_promotion(self, value: str = None):
+
         partern = "%d/%m/%Y"
-        if self.date_start:
+        if isinstance(
+            self.date_start,
+            date,
+        ):
             value = datetime.strftime(self.date_start, partern)
+        else:
+            value = self.date_start
         return value
 
     @property
@@ -140,9 +147,15 @@ class ProductModel(db.Model):
 
     @date_end_promotion.getter
     def date_end_promotion(self, value: str = None):
+
         partern = "%d/%m/%Y"
-        if self.date_end:
+        if isinstance(
+            self.date_end,
+            date,
+        ):
             value = datetime.strftime(self.date_end, partern)
+        else:
+            value = self.date_end
         return value
 
     """ format dates """

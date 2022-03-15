@@ -63,7 +63,6 @@ def create_product(data: dict):
                 new_product.image = file.file_bin
                 new_product.image_mimeType = file.mimetype
                 new_product.image_name = file.filename
-        print("PRODUCT: ", new_product)
         session.add(new_product)
         session.commit()
 
