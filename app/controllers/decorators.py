@@ -50,7 +50,8 @@ def verify_keys(expected_keys: list, optional_keys: bool = False):
                     "available_keys": expected_keys,
                     "wrong_keys_sended": key_error,
                 }, 422
-
+            except IndexError:
+                return {"error": "keys sent to more"}, httpstatus.BAD_REQUEST
             except Exception as e:
                 raise e
 
