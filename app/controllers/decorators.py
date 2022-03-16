@@ -247,7 +247,7 @@ def validator(
 ):
     def received_function(function):
         @wraps(function)
-        def wrapper(id: int = 0):
+        def wrapper(*args, **kwargs):
 
             regex_bithdate = (
                 "^(0[1-9]|[12][0-9]|3[01])[\/\-](0[1-9]|1[012])[\/\-]\d{4}$"
@@ -299,9 +299,7 @@ def validator(
                 if not match(regex_name, request_json[user_name]):
                     return {"error": "name in format incorrect"}, 400
 
-            if id:
-                return function(id)
-            return function()
+            return function(*args, **kwargs)
 
         return wrapper
 
