@@ -17,8 +17,10 @@ class UsersModel(db.Model):
     user_name: str
     id_seller: int
     email: str
+    """ Relationship """
     types_users: dict
     sellers: dict
+    """ Relationship """
 
     __tablename__ = "users"
     id_user = Column(sql.Integer, autoincrement=True, primary_key=True)

@@ -17,6 +17,10 @@ class SellerModel(db.Model):
     id_store: int
     date_creation: datetime
 
+    """ Relationship """
+    stores: str
+    """ Relationship """
+
     __tablename__ = "sellers"
     id_seller = Column(sql.Integer, autoincrement=True, primary_key=True)
     first_name = Column(sql.String(30), nullable=False)

@@ -1,10 +1,16 @@
 from flask import Blueprint
 
-from app.controllers.stores import stores_controllers
+from app.controllers.stores import (
+    create_stores,
+    update_store,
+    get_stores,
+    get_one_store,
+    delete_store,
+)
 
 bp = Blueprint("stores", __name__, url_prefix="/stores")
-bp.get("")(stores_controllers.get_stores)
-bp.get("<int:id>")(stores_controllers.get_one_store)
-bp.post("")(stores_controllers.create_stores)
-bp.delete("<int:id>")(stores_controllers.delete_store)
-bp.patch("<int:id>")(stores_controllers.update_store)
+bp.get("")(get_stores)
+bp.get("<int:id>")(get_one_store)
+bp.post("")(create_stores)
+bp.delete("<int:id>")(delete_store)
+bp.patch("<int:id>")(update_store)
