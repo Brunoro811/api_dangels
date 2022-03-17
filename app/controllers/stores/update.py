@@ -17,9 +17,15 @@ from app.decorators import verify_payload, validator
         "zip_code": str,
         "other_information": str,
     },
-    optional=["other_information"],
+    optional=[
+        "name_store",
+        "street",
+        "number",
+        "zip_code",
+        "other_information",
+    ],
 )
-def update_store(id: int):
+def update_store(data: dict, id: int):
     session: Session = current_app.db.session
     try:
         storie = StoreModel.query.get(id)
