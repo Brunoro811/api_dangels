@@ -24,7 +24,20 @@ from app.helpers.get_data_json_multi_part_form import get_files
         "sale_value_atacado": [float, int],
         "date_start": str,
         "date_end": str,
-    }
+    },
+    optional=[
+        "cost_value",
+        "id_category",
+        "id_store",
+        "name",
+        "sale_value_varejo",
+        "variations",
+        "quantity_atacado",
+        "sale_value_promotion",
+        "sale_value_atacado",
+        "date_start",
+        "date_end",
+    ],
 )
 def update_product(data: dict, id: int):
     session: Session = current_app.db.session
