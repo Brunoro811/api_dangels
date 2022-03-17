@@ -11,6 +11,8 @@ from app.controllers.products import (
     create_update_images_product,
     get_groups_products,
     create_group_products,
+    get_all_products_for_store,
+    create_distribute_product,
 )
 
 bp = Blueprint("products", __name__, url_prefix="/products")
@@ -20,11 +22,14 @@ bp.get("/images/<name>")(get_image_product)
 bp.get("/completed")(get_all_products_all_stores)
 bp.get("/group")(get_groups_products)
 
+bp.get("<int:id>")(get_all_products_for_store)
+
+
 bp.post("")(create_product)
 bp.post("/images/<int:id>")(create_update_images_product)
+bp.post("/group")(create_group_products)
+bp.post("/distribute")(create_distribute_product)
 
 bp.patch("<int:id>")(update_product)
 
 bp.delete("<int:id>")(delete_product)
-
-bp.post("/group")(create_group_products)
