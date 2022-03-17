@@ -1,6 +1,6 @@
 # Controle de Estoque Api
 
-### A Controle de Estoque Api faz o controle do estoque de produtos,vendas elucros entre várias lojas de uma mesma rede. Possui três tipos de usuários administrador, gerente e vendedor. 
+### A Controle de Estoque Api faz o controle do estoque de produtos,vendas e lucros de várias lojas de uma mesma empresa. Possui três tipos de usuários administrador, gerente e vendedor. 
 
 > Status: Em Desenvolvimento ⚠️
 > [![NPM](https://img.shields.io/npm/l/react)](https://github.com/Brunoro811/api_dangels/blob/development/LICENSE)
