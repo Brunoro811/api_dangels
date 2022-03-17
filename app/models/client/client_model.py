@@ -1,5 +1,5 @@
 from dataclasses import asdict, dataclass
-from datetime import datetime
+from datetime import datetime, date
 
 from app.configs.database import db
 
@@ -14,7 +14,7 @@ class ClientModel(db.Model):
     id_client: int
     first_name: str
     last_name: str
-    date_creation: DateTime
+    # date_creation: DateTime
     street: str
     number: int
     zip_code: str
@@ -24,6 +24,8 @@ class ClientModel(db.Model):
     email: str
     birthdate: DateTime
     cpf: str
+
+    date_creation_user: DateTime
 
     __tablename__ = "clients"
 
@@ -62,4 +64,21 @@ class ClientModel(db.Model):
     def convert_datetime(self, key: str, value: str) -> str:
         value = value.replace("-", "/")
         value = datetime.strptime(value, "%d/%m/%Y")
+        return value
+
+    @property
+    def date_creation_user(self):
+        return self.date_creation_user
+
+    @date_creation_user.getter
+    def date_creation_user(self, value: str = None):
+
+        partern = "%d/%m/%Y"
+        if isinstance(
+            self.date_creation,
+            date,
+        ):
+            value = datetime.strftime(self.date_creation, partern)
+        else:
+            value = self.date_creation
         return value

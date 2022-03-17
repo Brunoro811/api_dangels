@@ -147,15 +147,13 @@ class ProductModel(db.Model):
 
     @date_end_promotion.getter
     def date_end_promotion(self, value: str = None):
-
         partern = "%d/%m/%Y"
+        value = self.date_end
         if isinstance(
             self.date_end,
             date,
         ):
             value = datetime.strftime(self.date_end, partern)
-        else:
-            value = self.date_end
         return value
 
     """ format dates """

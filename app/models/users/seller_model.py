@@ -1,5 +1,5 @@
 from dataclasses import asdict, dataclass
-from datetime import datetime
+from datetime import datetime, date
 from app.configs.database import db
 
 from sqlalchemy import Column, ForeignKey
@@ -15,7 +15,8 @@ class SellerModel(db.Model):
     first_name: str
     last_name: str
     id_store: int
-    date_creation: datetime
+    # date_creation: datetime
+    date_creation_seller: datetime
 
     """ Relationship """
     stores: str
@@ -39,6 +40,21 @@ class SellerModel(db.Model):
     @validates("first_name", "last_name")
     def title(self, key: str, value: str):
         return value.title()
+
+    @property
+    def date_creation_seller(self):
+        return self.date_creation_seller
+
+    @date_creation_seller.getter
+    def date_creation_seller(self, value: str = None):
+        partern = "%d/%m/%Y"
+        value = self.date_creation
+        if isinstance(
+            self.date_creation,
+            date,
+        ):
+            value = datetime.strftime(self.date_creation, partern)
+        return value
 
 
 StoreModel.sellers = relationship(
