@@ -1,7 +1,6 @@
 from http import HTTPStatus
-from flask import current_app, jsonify, request
+from flask import current_app, request
 
-from app.auth import verify_token
 
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
@@ -62,15 +61,5 @@ def create_distribute_product():
         return {"error": "Not found"}, HTTPStatus.NOT_FOUND
     except BodyNoContent as e:
         return {"error": f"{e}"}, HTTPStatus.BAD_REQUEST
-    except Exception as e:
-        raise e
-
-
-# @verify_token
-def get_all_products_for_store(id: int):
-    try:
-        products = ProductModel.query.filter_by(id_store=id).all()
-
-        return jsonify(products), HTTPStatus.OK
     except Exception as e:
         raise e
