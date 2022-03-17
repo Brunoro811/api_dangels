@@ -1,11 +1,17 @@
 from flask import Blueprint
 
-from app.controllers.clients_controllers import clients_controllers
+from app.controllers.clients import (
+    create_client,
+    delete_client,
+    get_clients,
+    get_one_client,
+    update_client,
+)
 
 bp = Blueprint("clients", __name__, url_prefix="/clients")
 
-bp.get("")(clients_controllers.get_clients)
-bp.get("<int:id>")(clients_controllers.get_one_client)
-bp.post("")(clients_controllers.create_client)
-bp.patch("<int:id>")(clients_controllers.update_client)
-bp.delete("<int:id>")(clients_controllers.delete_client)
+bp.get("")(get_clients)
+bp.get("<int:id>")(get_one_client)
+bp.post("")(create_client)
+bp.patch("<int:id>")(update_client)
+bp.delete("<int:id>")(delete_client)
