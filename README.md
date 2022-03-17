@@ -107,14 +107,13 @@ flask run
 | api.products.get_image_product | GET |  /api/products/images/<name> |
 | api.products.get_one_product | GET |  /api/products/<int:id> |
 | api.products.update_product | PATCH  |  /api/products/<int:id> |
+| api.products.create_distribute_product | POST | /api/products/distribute |
+| api.products.get_all_products_for_store | GET | /api/products/distribute/<int:id> |
 | | | | | 
 | api.orders.create_sale | POST | /api/orders |
 | api.orders.delete_sale | DELETE | /api/orders/<int:id> |
 | api.orders.get_all_sale_for_id_seller | GET | /api/orders/seller/<int:id> |
 | api.orders.get_one_sale_for_id_order | GET | /api/orders/<int:id> |
-| | | | |
-| api.distribute.create_distribute_product | POST | /api/products/distribute |
-| api.distribute.get_all_products_for_store | GET | /api/products/distribute/<int:id> |
 | | | | |
 | api.clients.create_client | POST | /api/clients |
 | api.clients.delete_client | DELETE | /api/clients/<int:id> |
