@@ -7,6 +7,8 @@ from app.models.stores.store_model import StoreModel
 
 from app.decorators import verify_payload
 
+from sqlalchemy.exc import IntegrityError
+
 
 @verify_payload(
     fields_and_types={
@@ -19,11 +21,14 @@ from app.decorators import verify_payload
     optional=["other_information"],
 )
 def create_stores(data: dict):
-    session: Session = current_app.db.session
+    try:
+        session: Session = current_app.db.session
 
-    new_store = StoreModel(**data)
+        new_store = StoreModel(**data)
 
-    session.add(new_store)
-    session.commit()
+        session.add(new_store)
+        session.commit()
 
-    return jsonify(new_store), HTTPStatus.CREATED
+        return jsonify(new_store), HTTPStatus.CREATED
+    except IntegrityError as e:
+        return {"error": f"{e.args[0]}"}, HTTPStatus.UNPROCESSABLE_ENTITY
