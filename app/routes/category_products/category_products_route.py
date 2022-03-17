@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from app.controllers.category_products import (
+from app.controllers.category import (
     create_category,
     update_category,
     delete_category,

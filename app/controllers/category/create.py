@@ -1,7 +1,7 @@
 from flask import current_app, jsonify, request
 from http import HTTPStatus as httpstatus
 
-from app.controllers.category_products.category_decorators import verify_category
+from app.controllers.category.category_decorators import verify_category
 from app.models.category_products.category_model import CategoryModel
 
 from sqlalchemy.exc import IntegrityError
