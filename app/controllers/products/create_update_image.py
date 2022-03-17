@@ -1,24 +1,13 @@
-from pickletools import optimize
-from flask import current_app, jsonify, request, Response
+from flask import current_app, jsonify, request
 from http import HTTPStatus
-from PIL import Image
-import json
 
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.exc import UnmappedInstanceError, NoResultFound
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
 
 from werkzeug.exceptions import BadRequestKeyError
 from werkzeug.utils import secure_filename
 
-
-from app.controllers.products.products_helpers import help_normalize_variations
-from app.models.product.group_model import GroupModel
-from app.models.product.product_completed import ProductCompletedModel
 from app.models.product.products_model import ProductModel
-from app.models.product.variation_model import VariationModel
-
-from app.controllers.decorators import verify_keys, verify_types, validator
 
 
 def create_update_images_product(id: int):

@@ -69,12 +69,6 @@ def verify_types(correct_types: dict, optional_keys: bool = False):
                 key_error = []
                 data = None
                 data = get_data()
-                print("DATA -> ", data)
-                """if request.get_json():
-                    data = request.get_json()
-                else:
-                    data: dict = json.loads(request.form.get("product"))
-                    data.pop("file")"""
 
                 if not (optional_keys):
                     for key, value in correct_types.items():

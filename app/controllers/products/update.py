@@ -1,4 +1,4 @@
-from flask import current_app, jsonify
+from flask import current_app
 from http import HTTPStatus
 
 from sqlalchemy.orm import Session
