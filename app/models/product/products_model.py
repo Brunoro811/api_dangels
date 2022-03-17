@@ -19,7 +19,9 @@ class ProductModel(db.Model):
     name: str
     cost_value: float
     id_category: int
-    date_creation: Date
+
+    date_creation_product: Date
+
     id_store: int
     image_name: str
     quantity_atacado: int
@@ -132,13 +134,13 @@ class ProductModel(db.Model):
     def date_start_promotion(self, value: str = None):
 
         partern = "%d/%m/%Y"
+        value = self.date_start
+
         if isinstance(
             self.date_start,
             date,
         ):
             value = datetime.strftime(self.date_start, partern)
-        else:
-            value = self.date_start
         return value
 
     @property
@@ -154,6 +156,23 @@ class ProductModel(db.Model):
             date,
         ):
             value = datetime.strftime(self.date_end, partern)
+        return value
+
+    @property
+    def date_creation_product(self):
+        return self.date_creation_product
+
+    @date_creation_product.getter
+    def date_creation_product(self, value: str = None):
+
+        partern = "%d/%m/%Y"
+        value = self.date_creation
+
+        if isinstance(
+            self.date_creation,
+            date,
+        ):
+            value = datetime.strftime(self.date_creation, partern)
         return value
 
     """ format dates """
