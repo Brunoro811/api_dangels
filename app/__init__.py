@@ -22,8 +22,8 @@ def create_app():
     migrations.init_app(app)
     routes.init_app(app)
 
-    with app.app_context():
-        default_store()
-        default_types_users()
+    # with app.app_context():
+    #    default_store()
+    #    default_types_users()
 
     return app

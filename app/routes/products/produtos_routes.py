@@ -22,7 +22,7 @@ bp.get("/images/<name>")(get_image_product)
 bp.get("/completed")(get_all_products_all_stores)
 bp.get("/group")(get_groups_products)
 
-bp.get("<int:id>")(get_all_products_for_store)
+bp.get("/store/<int:id>")(get_all_products_for_store)
 
 
 bp.post("")(create_product)

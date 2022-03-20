@@ -1,8 +1,8 @@
-"""create tables in postgress
+"""variation.color move for products.color
 
-Revision ID: 197711839c1b
+Revision ID: 590946608449
 Revises: 
-Create Date: 2022-03-13 18:25:38.915558
+Create Date: 2022-03-20 15:20:37.714742
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '197711839c1b'
+revision = '590946608449'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -70,6 +70,7 @@ def upgrade():
     sa.Column('sale_value_promotion', sa.Float(precision=2), nullable=True),
     sa.Column('date_start', sa.Date(), nullable=True),
     sa.Column('date_end', sa.Date(), nullable=True),
+    sa.Column('color', sa.String(length=50), nullable=False),
     sa.Column('id_category', sa.Integer(), nullable=False),
     sa.Column('id_store', sa.Integer(), nullable=False),
     sa.Column('image', sa.LargeBinary(), nullable=True),
@@ -127,7 +128,6 @@ def upgrade():
     )
     op.create_table('variations',
     sa.Column('id_variation', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('color', sa.String(length=50), nullable=False),
     sa.Column('size', sa.String(length=50), nullable=False),
     sa.Column('quantity', sa.Integer(), nullable=False),
     sa.Column('id_product', sa.Integer(), nullable=False),

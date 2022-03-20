@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from app.decorators import verify_payload
 
-from app.models.product.product_completed import ProductCompletedModel
 from app.models.product.products_model import ProductModel
 from app.models.product.variation_model import VariationModel
 
@@ -19,6 +18,7 @@ from app.helpers import get_files
         "variations": list,
         "quantity_atacado": int,
         "cost_value": [int, float],
+        "color": str,
         "sale_value_atacado": [int, float],
         "sale_value_varejo": [int, float],
         "id_store": int,
@@ -31,29 +31,13 @@ from app.helpers import get_files
 def create_product(data: dict):
     session: Session = current_app.db.session
     try:
-        keys_product = [
-            "name",
-            "cost_value",
-            "sale_value_varejo",
-            "sale_value_atacado",
-            "id_category",
-            "quantity_atacado",
-            "id_store",
-            "sale_value_promotion",
-            "date_start",
-            "date_end",
-        ]
-        keys_colors = ["variations", "color_name"]
-        keys_sizes_product = ["sizes_product"]
-
-        product, colors_sizes_product = ProductCompletedModel.separates_model(
-            keys_product, keys_colors, keys_sizes_product, data
-        ).values()
+        list_variation = data.pop("variations")
+        product = data
 
         new_product = ProductModel(**product)
         new_product.variations = [
             VariationModel(**{**element, "id_product": new_product.id_product})
-            for element in colors_sizes_product
+            for element in list_variation
         ]
 
         files = get_files()
@@ -63,6 +47,7 @@ def create_product(data: dict):
                 new_product.image = file.file_bin
                 new_product.image_mimeType = file.mimetype
                 new_product.image_name = file.filename
+
         session.add(new_product)
         session.commit()
 
