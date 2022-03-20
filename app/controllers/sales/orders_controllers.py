@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import UnmappedInstanceError, NoResultFound
 
 import werkzeug.exceptions
-from app.controllers.sales_controllers.helpers_sales import (
+from app.controllers.sales.helpers_sales import (
     helper_verify_quatity_product_stock,
 )
 

@@ -16,6 +16,9 @@ class OrdersModel(db.Model):
     id_store: int
     id_seller: int
     id_client: int
+    """ relationship """
+    orders_has_products: list
+    """ relationship """
 
     __tablename__ = "orders"
 
@@ -25,7 +28,7 @@ class OrdersModel(db.Model):
     id_seller = Column(sql.Integer, ForeignKey("sellers.id_seller"), nullable=False)
     id_client = Column(sql.Integer, ForeignKey("clients.id_client"))
     id_store = Column(sql.Integer, ForeignKey("stores.id_store"), nullable=False)
-    orders_has_products_seller = relationship(
+    orders_has_products = relationship(
         "OrdersHasProductsModel", backref="orders", uselist=True
     )
 

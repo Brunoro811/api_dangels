@@ -3,7 +3,7 @@ from environs import Env
 
 from app import routes
 from app.configs import database, migrations, cors
-from app.helpers.defaultStore import default_store, default_types_users
+from app.default import default_types_users, default_client
 
 
 env = Env()
@@ -22,8 +22,8 @@ def create_app():
     migrations.init_app(app)
     routes.init_app(app)
 
-    # with app.app_context():
-    #    default_store()
-    #    default_types_users()
+    with app.app_context():
+        default_types_users()
+        default_client()
 
     return app

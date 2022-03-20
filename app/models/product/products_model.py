@@ -75,10 +75,7 @@ class ProductModel(db.Model):
 
     def sale_product(self, product_variation: dict):
         for color_size_stock in self.variations:
-            if (
-                color_size_stock.color == product_variation["color"]
-                and color_size_stock.size == product_variation["size"]
-            ):
+            if color_size_stock.size == product_variation["size"]:
                 setattr(
                     color_size_stock,
                     "quantity",
