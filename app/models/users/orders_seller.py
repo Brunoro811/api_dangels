@@ -1,21 +1,20 @@
 from dataclasses import asdict, dataclass
-from datetime import date
+from datetime import date, datetime
 from app.configs.database import db
 
 from sqlalchemy import Column, Date, ForeignKey
 from sqlalchemy.sql import sqltypes as sql
 from sqlalchemy.orm import relationship
 
-from app.models.stores.store_model import StoreModel
-
 
 @dataclass
 class OrdersModel(db.Model):
     id_order: int
-    date_creation: Date
+    date_creation_order: Date
     id_store: int
     id_seller: int
     id_client: int
+
     """ relationship """
     orders_has_products: list
     """ relationship """
@@ -34,3 +33,19 @@ class OrdersModel(db.Model):
 
     def __asdict__(self):
         return asdict(self)
+
+    @property
+    def date_creation_order(self):
+        return self.date_creation_order
+
+    @date_creation_order.getter
+    def date_creation_order(self, value: str = None):
+        partern = "%d/%m/%Y"
+        value = self.date_creation
+
+        if isinstance(
+            self.date_creation,
+            date,
+        ):
+            value = datetime.strftime(self.date_creation, partern)
+        return value
