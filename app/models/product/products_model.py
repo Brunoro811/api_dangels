@@ -18,6 +18,7 @@ class ProductModel(db.Model):
     code_product: int
     name: str
     cost_value: float
+    color: str
     id_category: int
 
     date_creation_product: Date
@@ -51,6 +52,7 @@ class ProductModel(db.Model):
     sale_value_promotion = Column(sql.Float(2))
     date_start = Column(sql.Date, default=None)
     date_end = Column(sql.Date, default=None)
+    color = Column(sql.String(50), nullable=False)
     id_category = Column(
         sql.Integer, ForeignKey("categorys.id_category"), nullable=False
     )

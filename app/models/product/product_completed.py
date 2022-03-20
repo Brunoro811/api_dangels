@@ -22,22 +22,23 @@ class ProductCompletedModel:
     def separates_model(
         cls,
         list_keys_product: list[str],
-        keys_colors: list[str],
+        keys_variations: list[str],
         list_keys_sizes: list[str],
         data_json: dict,
     ) -> dict:
         product = {}
+        list_variations = []
+
         list_colors_and_sizes = data_json["variations"]
         for key, value in data_json.items():
             if key in list_keys_product:
                 product[key] = value
-
-        list_variations = []
-        for obj_color_sizes_product in list_colors_and_sizes:
-            list_color_sizes_product: list = obj_color_sizes_product["sizes_product"]
-            for size in list_color_sizes_product:
-                size["color"] = obj_color_sizes_product["color_name"]
-                list_variations.append(size)
+            elif key in keys_variations:
+                product[key] = value
+        # for obj_color_sizes_product in list_colors_and_sizes:
+        #    list_color_sizes_product: list = obj_color_sizes_product["sizes_product"]
+        #    for size in list_color_sizes_product:
+        #        list_variations.append(size)
         return {"product": product, "colors_sizes_product": list_variations}
 
     @classmethod
@@ -57,12 +58,13 @@ class ProductCompletedModel:
 
         if data_json.get("variations"):
             list_colors_and_sizes = data_json["variations"]
-
+            print("")
+            print("data_json: ", data_json["variations"])
+            print("")
             for obj_color_sizes_product in list_colors_and_sizes:
                 list_color_sizes_product: list = obj_color_sizes_product[
                     "sizes_product"
                 ]
                 for size in list_color_sizes_product:
-                    size["color"] = obj_color_sizes_product["color_name"]
                     list_variations.append(size)
         return {"product": product, "variations": list_variations}
