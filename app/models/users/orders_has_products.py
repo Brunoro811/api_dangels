@@ -11,7 +11,6 @@ from app.models.stores.store_model import StoreModel
 
 @dataclass
 class OrdersHasProductsModel(db.Model):
-    id_order_has_products: int
     sale_value: float
     quantity: int
     color: str
