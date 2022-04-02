@@ -7,7 +7,7 @@ from http import HTTPStatus
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 
-from app.models.users.orders_seller import OrdersModel
+from app.models.orders_sellers.orders_seller import OrdersModel
 
 from app.default import data_month
 

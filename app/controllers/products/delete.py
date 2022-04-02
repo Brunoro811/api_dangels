@@ -7,7 +7,7 @@ from sqlalchemy.orm.exc import UnmappedInstanceError
 
 
 from app.models.product.products_model import ProductModel
-from app.models.product.variation_model import VariationModel
+from app.models.variations_products.variation_model import VariationModel
 
 
 def delete_product(id: int):

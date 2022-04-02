@@ -1,7 +1,7 @@
 from flask import current_app
 from app.default.default_values import types_sales
 from sqlalchemy.orm import Session
-from app.models.users.type_sale import TypeSaleModel
+from app.models.types_sales.type_sale import TypeSaleModel
 
 
 def default_types_sales():

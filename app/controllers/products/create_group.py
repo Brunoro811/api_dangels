@@ -6,7 +6,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import IntegrityError
 
 
-from app.models.product.group_model import GroupModel
+from app.models.group_products.group_model import GroupModel
 from app.models.product.products_model import ProductModel
 
 

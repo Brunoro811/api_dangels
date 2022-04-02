@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from app.models.users.orders_seller import OrdersModel
+from app.models.orders_sellers.orders_seller import OrdersModel
 
 
 def get_one_sale_for_id_order(id: int):

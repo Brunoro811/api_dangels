@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from app.decorators import verify_payload
 
 from app.models.product.products_model import ProductModel
-from app.models.product.variation_model import VariationModel
+from app.models.variations_products.variation_model import VariationModel
 
 from app.helpers import get_files
 
