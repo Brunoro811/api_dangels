@@ -132,6 +132,7 @@ flask run
  # **Endpoints**
  ## Rotas de Categorias
 
+
  <style>
    .sumary{
       padding:5px;
@@ -145,11 +146,16 @@ flask run
      background-color:#e28501;
    }
  </style>
+
   
 <details>
   <summary><b>POST /api/products/category - Essa rota permite o usuário logado cadastrar uma categoria de produto.</b></summary>
-<span class="sumary sumary--green">
+<span class="padding:5px;
+      border-radius:5px;
+      text-shadow: 1px 1px 2px black;">
+
 `POST /api/products/category - FORMATO DA REQUISIÇÃO`
+
 </span>
 
 ```json
