@@ -80,7 +80,7 @@ flask run
 </table>
 <hr/>
 
-# Endpoints
+# Sumário dos Endpoints
 
 | Endpoints | Methods | Rule |
 | :--- | :--- | :--- |
@@ -114,6 +114,7 @@ flask run
 | api.orders.delete_sale | DELETE | /api/orders/<int:id> |
 | api.orders.get_all_sale_for_id_seller | GET | /api/orders/seller/<int:id> |
 | api.orders.get_one_sale_for_id_order | GET | /api/orders/<int:id> |
+| api.orders.get_orders_sale_for_store | GET | /api/orders/store/<int:id> |
 | | | | |
 | api.clients.create_client | POST | /api/clients |
 | api.clients.delete_client | DELETE | /api/clients/<int:id> |
@@ -126,5 +127,47 @@ flask run
 | api.category.get_all_category | GET | /api/products/category |
 | api.category.get_category | GET | /api/products/category/<int:id_category> |
 | api.category.update_category | PATCH |/api/products/category/<int:id_category> |
+
   
- **Em construção**
+ # **Endpoints**
+ ## Rotas de Categorias
+  
+<details>
+  <summary><b>POST /api/products/category - Essa rota permite o usuário logado cadastrar uma categoria de produto.</b></summary>
+
+`POST /api/products/category - FORMATO DA REQUISIÇÃO`
+
+```json
+{
+	"name": "jeans"
+}
+```
+
+Caso dê tudo certo, a resposta será assim:
+
+`POST /clients/login - FORMATO DA RESPOSTA - STATUS 201`
+
+```json
+{
+  "id_category": 1,
+  "name": "Jeans"
+}
+```
+
+Erros :
+
+Caso a Categoria já exista:
+
+`CONFLICT - FORMATO DA RESPOSTA - STATUS 409`
+
+```JSON
+{
+  "error": "category already exist!"
+}
+```
+</details>
+  
+  
+  
+ **Possiveis erros de Token**
+  Em construção
