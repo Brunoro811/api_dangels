@@ -15,6 +15,7 @@ def get_one_product(id: int):
         if not product:
             raise NoResultFound
 
+        """
         obj_product_completed = {}
         print("Product: ", product.date_start)
         print("Product type: ", type(product.date_start))
@@ -22,11 +23,12 @@ def get_one_product(id: int):
             **product.asdict(),
             **help_normalize_variations(product.variations)[0],
         }
+        """
 
-        return jsonify(obj_product_completed), HTTPStatus.OK
+        return jsonify(product), HTTPStatus.OK
     except NoResultFound:
         return {"error": "Not found"}, HTTPStatus.NOT_FOUND
-    except AttributeError:
-        return {"error": "Not found"}, HTTPStatus.NOT_FOUND
+    # except AttributeError:
+    #    return {"error": "Not found"}, HTTPStatus.NOT_FOUND
     except Exception as e:
         raise e

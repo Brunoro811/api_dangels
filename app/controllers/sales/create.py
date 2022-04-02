@@ -1,5 +1,5 @@
 import datetime
-from flask import current_app
+from flask import current_app, jsonify
 from http import HTTPStatus
 
 from sqlalchemy.orm import Session
@@ -23,6 +23,7 @@ from app.models import ClientModel
         "id_client": int,
         "id_store": int,
         "products": list,
+        "id_type_sale": int,
     }
 )
 def create_sale(data: dict):
@@ -32,6 +33,7 @@ def create_sale(data: dict):
         orders_products = []
         date_now = datetime.date.today()
         list_products = data.pop("products")
+        id_type_sale = data.pop("id_type_sale")
 
         if not list_products:
             return {"erro": "list of products empty."}, HTTPStatus.BAD_REQUEST
@@ -79,6 +81,7 @@ def create_sale(data: dict):
                         "size": product["size"],
                         "id_product": product["id_product"],
                         "id_order": new_order.id_order,
+                        "id_type_sale": id_type_sale,
                     }
                 )
             )
@@ -86,7 +89,7 @@ def create_sale(data: dict):
         session.add(new_order)
         session.commit()
 
-        return "", HTTPStatus.CREATED
+        return jsonify(new_order), HTTPStatus.CREATED
     except werkzeug.exceptions.NotFound as e:
         return {"erro": f"{e.description} Not found."}, HTTPStatus.NOT_FOUND
     except Exception as e:

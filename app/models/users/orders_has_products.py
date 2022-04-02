@@ -28,6 +28,9 @@ class OrdersHasProductsModel(db.Model):
 
     id_product = Column(sql.Integer, ForeignKey("products.id_product"), nullable=False)
     id_order = Column(sql.Integer, ForeignKey("orders.id_order"), nullable=False)
+    id_type_sale = Column(
+        sql.Integer, ForeignKey("types_sales.id_type_sale"), nullable=False
+    )
 
     def __asdict__(self):
         return asdict(self)

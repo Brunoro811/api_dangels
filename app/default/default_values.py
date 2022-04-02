@@ -41,3 +41,8 @@ data_month = {
     "11": [1, 30],
     "12": [1, 31],
 }
+
+types_sales = [
+    {"name": "Loja", "commission_amount": "7"},
+    {"name": "Internet", "commission_amount": "10"},
+]

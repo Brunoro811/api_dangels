@@ -33,6 +33,7 @@ class ProductModel(db.Model):
     """ Relacionamentos """
     store: dict
     category: dict
+    variations: dict
     """ Relacionamentos """
     date_start_promotion: Date = None
     date_end_promotion: Date = None
@@ -119,7 +120,7 @@ class ProductModel(db.Model):
         if isinstance(self.date_start, date) and isinstance(self.date_end, date):
             if date_now >= self.date_start and date_now <= self.date_end:
                 self.is_promotion = True
-        value = self.sale_value_promotion
+                value = self.sale_value_promotion
 
         return value
 
