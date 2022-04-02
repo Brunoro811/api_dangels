@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from flask import jsonify
 
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -11,8 +12,15 @@ def get_one_sale_for_id_order(id: int):
         if not order:
             raise NoResultFound
         data = {"order": order}
-        return data, HTTPStatus.OK
+        order_completed = {
+            "seller": order.sellers,
+            "store": order.store,
+            "client": order.client,
+        }
+        print("")
+        print("Output: ", order.orders_has_products)
 
+        return jsonify(order), HTTPStatus.OK
     except NoResultFound:
         return {"error": "Order not found."}, HTTPStatus.NOT_FOUND
     except AttributeError as e:

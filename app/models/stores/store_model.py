@@ -24,7 +24,7 @@ class StoreModel(db.Model):
     zip_code = Column(sql.String(9), nullable=False)
     other_information = Column(sql.String(200), nullable=False)
 
-    orders = relationship("OrdersModel", backref="orders", uselist=True)
+    orders = relationship("OrdersModel", backref="store", uselist=True)
 
     def asdict(self):
         return asdict(self)
