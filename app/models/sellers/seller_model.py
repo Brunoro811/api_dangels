@@ -15,7 +15,6 @@ class SellerModel(db.Model):
     first_name: str
     last_name: str
     id_store: int
-    # date_creation: datetime
     date_creation_seller: datetime
 
     """ Relationship """

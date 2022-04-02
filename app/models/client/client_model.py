@@ -43,7 +43,7 @@ class ClientModel(db.Model):
     birthdate = Column(sql.DateTime, nullable=False)
     cpf = Column(sql.String(14), unique=True, nullable=False)
 
-    orders = relationship("OrdersModel", backref="clients", uselist=True)
+    orders = relationship("OrdersModel", backref="client", uselist=True)
 
     def __asdict__(self):
         return asdict(self)
