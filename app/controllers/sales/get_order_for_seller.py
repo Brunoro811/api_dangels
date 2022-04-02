@@ -6,6 +6,7 @@ from http import HTTPStatus
 
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
+from app.helpers.range_date_of_month import range_date_of_month
 
 from app.models.orders_sellers.orders_seller import OrdersModel
 
@@ -33,11 +34,13 @@ def get_all_sale_for_id_seller(id: int, month: "int or None" = None):
             if int(month) > 12 or int(month) < 1:
                 return {"error": "Month invalid!"}, HTTPStatus.UNPROCESSABLE_ENTITY
 
-            date_start = f"{date[:-5]}{month}-0{data_month[month][0]}1"
+            date_start = f"{date[:-5]}{month}-0{data_month[month][0]}"
             date_end = f"{date[:-5]}{month}-{data_month[month][1]}"
         else:
-            date_start = f"{date[:-2]}01"
-            date_end = f"{date[:-2]}31"
+            dates_of_month = range_date_of_month(datetime.date.today())
+
+            date_start = dates_of_month.initial
+            date_end = dates_of_month.the_end
 
         orders: OrdersModel = (
             OrdersModel.query.filter_by(id_seller=id)
