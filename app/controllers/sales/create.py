@@ -12,8 +12,8 @@ from app.controllers.sales.helpers_sales import (
 from app.models.product.products_model import ProductModel
 from app.decorators import verify_payload
 
-from app.models.users.orders_has_products import OrdersHasProductsModel
-from app.models.users.orders_seller import OrdersModel
+from app.models.orders_has_products.orders_has_products import OrdersHasProductsModel
+from app.models.orders_sellers.orders_seller import OrdersModel
 from app.models import ClientModel
 
 

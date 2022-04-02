@@ -2,7 +2,7 @@ from flask import current_app
 from sqlalchemy.orm import Session
 
 from app.models.stores.store_model import StoreModel
-from app.models.users.type_user_model import TypeUserModel
+from app.models.types_users.type_user_model import TypeUserModel
 
 from app.default.default_values import type_users
 

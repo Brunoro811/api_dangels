@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 
 from app.controllers.exc.user_erros import BodyNoContent
-from app.models.product.variation_model import VariationModel
+from app.models.variations_products.variation_model import VariationModel
 
 from app.models.product.products_model import ProductModel
 from app.models.stores.store_model import StoreModel

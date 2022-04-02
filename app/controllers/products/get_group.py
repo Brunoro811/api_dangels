@@ -2,7 +2,7 @@ from flask import jsonify
 from http import HTTPStatus
 
 
-from app.models.product.group_model import GroupModel
+from app.models.group_products.group_model import GroupModel
 
 
 def get_groups_products():

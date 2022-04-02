@@ -10,8 +10,8 @@ from app.controllers.exc.user_erros import (
 )
 
 
-from app.models.users.users_completed import UsersCompletedModel
-from app.models.users.seller_model import SellerModel
+from app.models.user_completed.users_completed import UsersCompletedModel
+from app.models.sellers.seller_model import SellerModel
 from app.models.users.users_model import UsersModel
 from app.models.stores.store_model import StoreModel
 

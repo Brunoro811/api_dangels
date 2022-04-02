@@ -5,8 +5,8 @@ from http import HTTPStatus
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import UnmappedInstanceError
 
-from app.models.users.orders_has_products import OrdersHasProductsModel
-from app.models.users.orders_seller import OrdersModel
+from app.models.orders_has_products.orders_has_products import OrdersHasProductsModel
+from app.models.orders_sellers.orders_seller import OrdersModel
 
 from werkzeug.exceptions import NotFound
 

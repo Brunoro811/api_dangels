@@ -5,8 +5,8 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy.sql import sqltypes as sql
 from sqlalchemy.orm import relationship
 
-from app.models.users.seller_model import SellerModel
-from app.models.users.type_user_model import TypeUserModel
+from app.models.sellers.seller_model import SellerModel
+from app.models.types_users.type_user_model import TypeUserModel
 from app.configs.database import db
 
 
