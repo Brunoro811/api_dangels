@@ -131,6 +131,7 @@ flask run
   
  # **Endpoints**
  ## Rotas de Categorias
+
   
 <details>
   <summary><b>POST /api/products/category - Essa rota permite o usuário logado cadastrar uma categoria de produto.</b></summary>
@@ -157,16 +158,105 @@ Caso dê tudo certo, a resposta será assim:
 Erros :
 
 Caso a Categoria já exista:
-
+<span class="sumary sumary--orange">
 `CONFLICT - FORMATO DA RESPOSTA - STATUS 409`
-
+</span>
 ```JSON
 {
   "error": "category already exist!"
 }
 ```
 </details>
-  
+
+<br/>
+
+## Rotas de Clients
+
+<details>
+  <summary><b>GET /api/clients?search=string - Essa rota permite o usuário logado buscar todos os clients ou por um cliente especifico passando o parametro search na url.</b></summary>
+
+`GET /api/clients?search=string - FORMATO DA REQUISIÇÃO`
+
+** No body. **
+
+Caso a requisição seja feita sem o parametro ```search```, a resposta será assim:
+`GET /api/clients - FORMATO DA RESPOSTA - STATUS 201`
+
+**A pesquisa não é case sensitive.**
+
+Com Clientes cadastrados :
+
+```json
+[
+  {
+    "id_client": 2,
+    "first_name": "Livia",
+    "last_name": "Nobre",
+    "street": "Rua tal",
+    "number": 490,
+    "zip_code": "60000-000",
+    "country": "CE",
+    "city": "Fortaleza",
+    "phone": "(85)91234-4567",
+    "email": "email@email.com.br",
+    "birthdate": "Wed, 23 Oct 1996 00:00:00 GMT",
+    "cpf": "123.456.789.01",
+    "date_creation_user": "08/04/2022"
+  },
+  {
+    "id_client": 6,
+    "first_name": "Ilze",
+    "last_name": "Nobre",
+    "street": "Rua tal",
+    "number": 490,
+    "zip_code": "60000-000",
+    "country": "CE",
+    "city": "Fortaleza",
+    "phone": "(85)91234-4567",
+    "email": "email2@email.com.br",
+    "birthdate": "Wed, 23 Oct 1996 00:00:00 GMT",
+    "cpf": "123.456.789.03",
+    "date_creation_user": "08/04/2022"
+  }
+]
+```
+
+Sem Clientes cadastrados :
+
+```json
+[]
+```
+Caso a requisição seja feita com o parametro ```search```, a resposta será assim:
+
+`GET /api/clients?search=livia - FORMATO DA RESPOSTA - STATUS 201`
+
+Caso encontre ```first_name``` iguais ou parecidos :
+```json
+[
+  {
+    "id_client": 2,
+    "first_name": "Livia",
+    "last_name": "Nobre",
+    "street": "Rua tal",
+    "number": 490,
+    "zip_code": "60000-000",
+    "country": "CE",
+    "city": "Fortaleza",
+    "phone": "(85)91234-4567",
+    "email": "email@email.com.br",
+    "birthdate": "Wed, 23 Oct 1996 00:00:00 GMT",
+    "cpf": "123.456.789.01",
+    "date_creation_user": "08/04/2022"
+  }
+]
+```
+Caso não encontre :
+
+```json
+[]
+```
+
+</details>
   
   
  **Possiveis erros de Token**
