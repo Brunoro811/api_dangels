@@ -14,7 +14,6 @@ class ClientModel(db.Model):
     id_client: int
     first_name: str
     last_name: str
-    # date_creation: DateTime
     street: str
     number: int
     zip_code: str
