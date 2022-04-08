@@ -14,7 +14,7 @@ def get_clients():
         session: Session = current_app.db.session
         clients = (
             session.query(ClientModel)
-            .filter(ClientModel.first_name.like(f"%{search[1:len(search)]}"))
+            .filter(ClientModel.first_name.like(f"%{search[1:len(search)]}%"))
             .all()
         )
 
