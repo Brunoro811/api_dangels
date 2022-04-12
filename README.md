@@ -113,6 +113,8 @@ flask run
 | api.orders.create_sale | POST | /api/orders |
 | api.orders.delete_sale | DELETE | /api/orders/<int:id> |
 | api.orders.get_all_sale_for_id_seller | GET | /api/orders/seller/<int:id> |
+| api.orders.get_all_sale_finish_for_id_seller | GET | /api/orders/finish/seller/<int:id> |
+| api.orders.get_all_sale_not_finish_for_id_seller | GET | /api/orders/not_finish/seller/<int:id> |
 | api.orders.get_one_sale_for_id_order | GET | /api/orders/<int:id> |
 | api.orders.get_orders_sale_for_store | GET | /api/orders/store/<int:id> |
 | | | | |
