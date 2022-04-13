@@ -15,6 +15,7 @@ type_users = [
 client = {
     "first_name": "Sem dado",
     "last_name": "Sem dado",
+    "name_complete": "Sem dado",
     "street": "Sem dado",
     "number": 0,
     "zip_code": "00000-000",

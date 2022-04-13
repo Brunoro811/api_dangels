@@ -5,8 +5,7 @@ from app.configs.database import db
 
 from sqlalchemy import Column, DateTime
 from sqlalchemy.sql import sqltypes as sql
-from sqlalchemy.orm import validates
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 
 @dataclass
@@ -25,6 +24,7 @@ class ClientModel(db.Model):
     cpf: str
 
     date_creation_user: DateTime
+    name_complete: str
 
     __tablename__ = "clients"
 
@@ -41,6 +41,7 @@ class ClientModel(db.Model):
     email = Column(sql.String(100), unique=True, nullable=False)
     birthdate = Column(sql.DateTime, nullable=False)
     cpf = Column(sql.String(14), unique=True, nullable=False)
+    name_complete = Column(sql.String(70), nullable=False)
 
     orders = relationship("OrdersModel", backref="client", uselist=True)
 

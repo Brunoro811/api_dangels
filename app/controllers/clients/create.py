@@ -27,7 +27,12 @@ from app.models.client.client_model import ClientModel
 def create_client(data: dict):
     try:
         session: Session = current_app.db.session
-        new_cliente = ClientModel(**data)
+
+        first_name = " ".join(data["first_name"].lower().split())
+        last_name = " ".join(data["last_name"].lower().split())
+
+        name_completed: dict = {"name_complete": f"{first_name} {last_name}"}
+        new_cliente = ClientModel(**{**data, **name_completed})
 
         session.add(new_cliente)
         session.commit()
