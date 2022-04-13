@@ -15,6 +15,7 @@ class OrdersModel(db.Model):
     id_store: int
     id_seller: int
     id_client: int
+    id_type_sale: int
     sale_finish: bool
 
     """ relationship """
@@ -30,6 +31,10 @@ class OrdersModel(db.Model):
     id_seller = Column(sql.Integer, ForeignKey("sellers.id_seller"), nullable=False)
     id_client = Column(sql.Integer, ForeignKey("clients.id_client"))
     id_store = Column(sql.Integer, ForeignKey("stores.id_store"), nullable=False)
+
+    id_type_sale = Column(
+        sql.Integer, ForeignKey("types_sales.id_type_sale"), nullable=False
+    )
     orders_has_products = relationship(
         "OrdersHasProductsModel", backref="orders", uselist=True
     )

@@ -15,6 +15,7 @@ from app.decorators import verify_payload
 from app.models.orders_has_products.orders_has_products import OrdersHasProductsModel
 from app.models.orders_sellers.orders_seller import OrdersModel
 from app.models import ClientModel
+from app.models.types_sales.type_sale import TypeSaleModel
 
 
 @verify_payload(
@@ -24,7 +25,6 @@ from app.models import ClientModel
         "id_store": int,
         "products": list,
         "id_type_sale": int,
-        "sale_finish": bool,
     }
 )
 def create_sale(data: dict):
@@ -34,14 +34,22 @@ def create_sale(data: dict):
         orders_products = []
         date_now = datetime.date.today()
         list_products = data.pop("products")
-        id_type_sale = data.pop("id_type_sale")
 
         if not list_products:
             return {"erro": "list of products empty."}, HTTPStatus.BAD_REQUEST
 
         ClientModel.query.get_or_404(data["id_client"], description="client")
 
-        new_order = OrdersModel(**data)
+        type_sale: TypeSaleModel = TypeSaleModel.query.get_or_404(
+            data["id_type_sale"], description="type sale"
+        )
+        sale_finish = (
+            {"sale_finish": True}
+            if type_sale.name == "Loja"
+            else {"sale_finish": False}
+        )
+
+        new_order = OrdersModel(**{**data, **sale_finish})
 
         orders_products = []
         for product in list_products:
@@ -82,7 +90,6 @@ def create_sale(data: dict):
                         "size": product["size"],
                         "id_product": product["id_product"],
                         "id_order": new_order.id_order,
-                        "id_type_sale": id_type_sale,
                     }
                 )
             )
@@ -93,5 +100,7 @@ def create_sale(data: dict):
         return jsonify(new_order), HTTPStatus.CREATED
     except werkzeug.exceptions.NotFound as e:
         return {"erro": f"{e.description} Not found."}, HTTPStatus.NOT_FOUND
+    except InterruptedError as e:
+        return {"erro": f"{e.args[0]}"}, HTTPStatus.BAD_REQUEST
     except Exception as e:
         raise e
