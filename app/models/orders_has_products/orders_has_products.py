@@ -1,5 +1,4 @@
 from dataclasses import asdict, dataclass
-from itertools import product
 from app.configs.database import db
 
 from sqlalchemy import Column, ForeignKey
@@ -28,9 +27,6 @@ class OrdersHasProductsModel(db.Model):
 
     id_product = Column(sql.Integer, ForeignKey("products.id_product"), nullable=False)
     id_order = Column(sql.Integer, ForeignKey("orders.id_order"), nullable=False)
-    id_type_sale = Column(
-        sql.Integer, ForeignKey("types_sales.id_type_sale"), nullable=False
-    )
 
     @property
     def product(self):
@@ -38,7 +34,6 @@ class OrdersHasProductsModel(db.Model):
 
     @product.getter
     def product(self, value: ProductModel) -> ProductModel:
-        ...
         value = ProductModel.query.get(self.id_product)
         return value
 
