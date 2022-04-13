@@ -42,14 +42,14 @@ def verify_payload(
                 return controller(*args, data=filtered_data, **kwargs)
 
             except JSONDecodeError:
-                msg = {"msg": "JSON in invalid format"}
+                msg = {"erro": "JSON in invalid format"}
                 return jsonify(msg), HTTPStatus.BAD_REQUEST
             except InvalidValueTypesError as err:
                 return jsonify(err.description), err.code
             except FieldMissingError as err:
                 return jsonify(err.description), err.code
             except JSONNotFound as err:
-                return {"msg": f"{err.describe}"}, err.status_code
+                return {"erro": f"{err.describe}"}, err.status_code
 
         return wrapper
 

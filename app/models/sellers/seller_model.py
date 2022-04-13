@@ -18,7 +18,7 @@ class SellerModel(db.Model):
     date_creation_seller: datetime
 
     """ Relationship """
-    stores: str
+    store: str
     """ Relationship """
 
     __tablename__ = "sellers"
@@ -28,7 +28,7 @@ class SellerModel(db.Model):
     date_creation = Column(sql.DateTime, default=datetime.utcnow())
     date_resignation = Column(sql.DateTime)
     id_store = Column(sql.Integer, ForeignKey("stores.id_store"))
-    stores = relationship(
+    store = relationship(
         "StoreModel", foreign_keys=[id_store], back_populates="sellers"
     )
     orders = relationship("OrdersModel", backref="sellers", uselist=True)
@@ -57,5 +57,5 @@ class SellerModel(db.Model):
 
 
 StoreModel.sellers = relationship(
-    "SellerModel", order_by=SellerModel.id_store, back_populates="stores"
+    "SellerModel", order_by=SellerModel.id_store, back_populates="store"
 )

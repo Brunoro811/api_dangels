@@ -24,6 +24,7 @@ from app.models import ClientModel
         "id_store": int,
         "products": list,
         "id_type_sale": int,
+        "sale_finish": bool,
     }
 )
 def create_sale(data: dict):
