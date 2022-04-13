@@ -6,11 +6,16 @@ from app.controllers.sales import (
     get_all_sale_for_id_seller,
     get_orders_sale_for_store,
     delete_sale,
+    get_all_sale_finish_for_id_seller,
+    get_all_sale_not_finish_for_id_seller,
 )
 
 bp = Blueprint("orders", __name__, url_prefix="/orders")
 
 bp.get("/seller/<int:id>/")(get_all_sale_for_id_seller)
+bp.get("/finish/seller/<int:id>/")(get_all_sale_finish_for_id_seller)
+bp.get("/not_finish/seller/<int:id>/")(get_all_sale_not_finish_for_id_seller)
+
 bp.get("<int:id>")(get_one_sale_for_id_order)
 bp.get("/store/<int:id>")(get_orders_sale_for_store)
 

@@ -15,7 +15,6 @@ def get_orders_sale_for_store(id: int):
         for order in list_found_orders_for_store:
             if not order:
                 raise NoResultFound
-            data = {"order": order}
             order_completed = {
                 "seller": order.sellers,
                 "store": order.store,

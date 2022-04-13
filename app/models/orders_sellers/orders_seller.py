@@ -1,5 +1,6 @@
 from dataclasses import asdict, dataclass
 from datetime import date, datetime
+from email.policy import default
 from app.configs.database import db
 
 from sqlalchemy import Column, Date, ForeignKey
@@ -14,6 +15,7 @@ class OrdersModel(db.Model):
     id_store: int
     id_seller: int
     id_client: int
+    sale_finish: bool
 
     """ relationship """
     orders_has_products: list
@@ -23,6 +25,7 @@ class OrdersModel(db.Model):
 
     id_order = Column(sql.Integer, autoincrement=True, primary_key=True)
     date_creation = Column(sql.Date, default=date.today())
+    sale_finish = Column(sql.Boolean, nullable=False)
 
     id_seller = Column(sql.Integer, ForeignKey("sellers.id_seller"), nullable=False)
     id_client = Column(sql.Integer, ForeignKey("clients.id_client"))

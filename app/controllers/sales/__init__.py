@@ -3,3 +3,6 @@ from .get_one_sale import get_one_sale_for_id_order
 from .get_order_for_seller import get_all_sale_for_id_seller
 from .delete import delete_sale
 from .get_orders_for_store import get_orders_sale_for_store
+
+from .get_orders_finish_for_seller import get_all_sale_finish_for_id_seller
+from .get_orders_not_finish_for_seller import get_all_sale_not_finish_for_id_seller
